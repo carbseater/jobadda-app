@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "658402653566",
+    "firebase_url": "https://jobadda-ae61d-default-rtdb.firebaseio.com",
+    "project_id": "jobadda-ae61d",
+    "storage_bucket": "jobadda-ae61d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658402653566:android:e133fc900b9a2fd96f2f2f",
+        "android_client_info": {
+          "package_name": "com.jobadda"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658402653566-12usns7e8a5vavve7rfljll5ur0mo7n0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7UOFdsCom3dkiTeQcb56Nc680UjO610E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658402653566-12usns7e8a5vavve7rfljll5ur0mo7n0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

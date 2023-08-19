@@ -1,0 +1,26 @@
+import { scale } from 'react-native-size-matters';
+
+export const padding = {
+    small: scale(8),
+    medium: scale(16),
+    large: scale(24),
+    extraLarge: scale(32),
+    horizontalSmall: scale(12),
+    horizontalMedium: scale(20),
+    horizontalLarge: scale(28),
+    verticalSmall: scale(10),
+    verticalMedium: scale(18),
+    verticalLarge: scale(26),
+    smallXs: scale(4),
+    smallSm: scale(6),
+    smallMd: scale(10),
+    smallLg: scale(14),
+    mediumXs: scale(12),
+    mediumSm: scale(14),
+    mediumMd: scale(18),
+    mediumLg: scale(22),
+    largeXs: scale(28),
+    largeSm: scale(32),
+    largeMd: scale(36),
+    largeLg: scale(40),
+};

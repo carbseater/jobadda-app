@@ -1,24 +1,21 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {SignInForm} from '../screens/auth/sign-in';
-import SignUpForm from '../screens/auth/sign-up';
+
+import {SignUpScreen} from '../screens/auth/sign-up';
+import {LoginScreen} from 'screens/auth/login-page';
+import {ForgotPasswordScreen} from 'screens/auth/recover-password';
+import {nav} from 'constants/navigation';
+import {useAuth} from 'AuthContext';
+import HomePage from 'screens/app/home-page';
+import {AuthStack} from './auth-stack';
+import {AppStack} from './app-stack';
 const Stack = createNativeStackNavigator();
 const Routes = () => {
+  const {currentUser} = useAuth();
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Signup">
-        <Stack.Screen
-          name="Signin"
-          component={SignInForm}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Signup"
-          component={SignUpForm}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
+      {currentUser ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   );
 };
