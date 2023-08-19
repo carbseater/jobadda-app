@@ -1,0 +1,27 @@
+import { scale } from 'react-native-size-matters';
+
+export const margin = {
+    none: 0,
+    small: scale(4),
+    medium: scale(8),
+    large: scale(16),
+    extraLarge: scale(24),
+    horizontalSmall: scale(6),
+    horizontalMedium: scale(12),
+    horizontalLarge: scale(20),
+    verticalSmall: scale(10),
+    verticalMedium: scale(18),
+    verticalLarge: scale(26),
+    smallXs: scale(2),
+    smallSm: scale(3),
+    smallMd: scale(6),
+    smallLg: scale(10),
+    mediumXs: scale(10),
+    mediumSm: scale(12),
+    mediumMd: scale(16),
+    mediumLg: scale(20),
+    largeXs: scale(22),
+    largeSm: scale(26),
+    largeMd: scale(30),
+    largeLg: scale(34),
+};

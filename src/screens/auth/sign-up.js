@@ -1,59 +1,277 @@
+import React, {memo, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import Background from '../../components/Background';
+import Logo from '../../components/Logo';
+import Header from '../../components/Header';
+import Button from '../../components/Button';
+import BackButton from '../../components/BackButton';
+import {theme} from '../../core/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  Box,
-  Button,
-  Center,
-  FormControl,
-  Heading,
-  Input,
-  VStack,
-} from 'native-base';
-import React from 'react';
+  emailValidator,
+  passwordValidator,
+  nameValidator,
+} from '../../core/utils';
+import {nav} from 'constants/navigation';
+import {useAuth} from 'AuthContext';
+import {Controller, useForm} from 'react-hook-form';
+import {HelperText, Menu, TextInput, TouchableRipple} from 'react-native-paper';
+import {signUp} from 'firebase-database/write-operations';
 
-const SignUpForm = () => {
+export const SignUpScreen = memo(({navigation}) => {
+  const {signUpWithEmailAndPassword} = useAuth();
+  const [cityDropdownVisible, setCityDropdownVisible] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+    setError,
+  } = useForm();
+  const _onSignUpPressed = async formData => {
+    const {confirmPassword, password, email, firstName, lastName, city} =
+      formData;
+    if (confirmPassword != password) {
+      setError('confirmPassword', {message: "Password didn't matched"});
+      return;
+    }
+    try {
+      const {user} = await signUpWithEmailAndPassword(email, password);
+      await AsyncStorage.setItem(
+        '@userProfile',
+        JSON.stringify({firstName, lastName, email, city}),
+      );
+      console.log('User created', user);
+      await signUp({userId: user.uid, ...formData});
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const cityOptions = {
+    noida: 'Noida',
+    greater_noida: 'Greater noida',
+    bhangel: 'Bhangel',
+    ghaziabad: 'Ghaziabad',
+  };
+  // console.log('Errors', errors);
   return (
-    <Center w="100%" flex={1}>
-      <Box safeArea p="2" w="90%" maxW="290" py="8">
-        <Heading
-          size="lg"
-          color="coolGray.800"
-          _dark={{
-            color: 'warmGray.50',
-          }}
-          fontWeight="semibold"
-        >
-          Welcome
-        </Heading>
-        <Heading
-          mt="1"
-          color="coolGray.600"
-          _dark={{
-            color: 'warmGray.200',
-          }}
-          fontWeight="medium"
-          size="xs"
-        >
-          Sign up to continue!
-        </Heading>
-        <VStack space={3} mt="5">
-          <FormControl>
-            <FormControl.Label>Email</FormControl.Label>
-            <Input />
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Password</FormControl.Label>
-            <Input type="password" />
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Confirm Password</FormControl.Label>
-            <Input type="password" />
-          </FormControl>
-          <Button mt="2" colorScheme="danger">
-            Sign up
-          </Button>
-        </VStack>
-      </Box>
-    </Center>
-  );
-};
+    <Background>
+      <BackButton goBack={() => navigation.navigate(nav.LOGIN)} />
 
-export default SignUpForm;
+      {/* <Logo /> */}
+
+      <Header>Create Account</Header>
+
+      <Controller
+        control={control}
+        rules={{
+          required: 'First name is required',
+          minLength: {
+            value: 2,
+            message: 'First name should contain at least 2 characters',
+          },
+        }}
+        render={({field: {onChange, value}}) => (
+          <TextInput
+            mode="outlined"
+            label="First name"
+            returnKeyType="next"
+            value={value}
+            style={{marginTop: 10}}
+            onChangeText={text => onChange(text)}
+          />
+        )}
+        name="firstName"
+      />
+      {errors.firstName && (
+        <HelperText style={{color: 'red'}}>
+          {errors.firstName.message}
+        </HelperText>
+      )}
+      <Controller
+        control={control}
+        rules={{
+          required: 'Last name is required',
+          minLength: {
+            value: 2,
+            message: 'Last name should contain at least 2 characters',
+          },
+        }}
+        render={({field: {onChange, value}}) => (
+          <TextInput
+            mode="outlined"
+            label="Last name"
+            returnKeyType="next"
+            value={value}
+            style={{marginTop: 10}}
+            onChangeText={text => onChange(text)}
+          />
+        )}
+        name="lastName"
+      />
+      {errors.lastName && (
+        <HelperText style={{color: 'red'}}>
+          {errors.lastName.message}
+        </HelperText>
+      )}
+      <Controller
+        control={control}
+        rules={{
+          required: 'City name is required',
+        }}
+        render={({field: {onChange, value}}) => (
+          <Menu
+            visible={cityDropdownVisible}
+            onDismiss={() => setCityDropdownVisible(false)}
+            contentStyle={
+              {
+                // backgroundColor: colors.primaryContainer,
+              }
+            }
+            anchor={
+              <TouchableRipple onPress={() => setCityDropdownVisible(true)}>
+                <View pointerEvents={'none'}>
+                  <TextInput
+                    value={cityOptions[value]}
+                    mode={'outlined'}
+                    label={'Select city'}
+                    pointerEvents={'none'}
+                    style={{marginTop: 10}}
+                    right={
+                      <TextInput.Icon
+                        icon={cityDropdownVisible ? 'menu-up' : 'menu-down'}
+                      />
+                    }
+                  />
+                </View>
+              </TouchableRipple>
+            }>
+            {Object.entries(cityOptions)?.map(([key, value]) => {
+              // console.log(key, value);
+              return (
+                <Menu.Item
+                  key={key}
+                  title={value}
+                  onPress={() => {
+                    onChange(key);
+                    setCityDropdownVisible(false);
+                  }}
+                />
+              );
+            })}
+          </Menu>
+        )}
+        name="city"
+      />
+      {errors.lastName && (
+        <HelperText style={{color: 'red'}}>
+          {errors.lastName.message}
+        </HelperText>
+      )}
+      <Controller
+        control={control}
+        rules={{
+          required: 'Email is required',
+          // validate: {
+          //   customValidation: value => emailValidator(value),
+          // },
+        }}
+        render={({field: {onChange, value}}) => (
+          <TextInput
+            mode="outlined"
+            label="Email"
+            returnKeyType="next"
+            value={value}
+            style={{marginTop: 10}}
+            onChangeText={text => onChange(text)}
+          />
+        )}
+        name="email"
+      />
+      {errors.email && (
+        <HelperText style={{color: 'red'}}>{errors.email.message}</HelperText>
+      )}
+
+      <Controller
+        control={control}
+        rules={{
+          required: 'Password is required',
+          minLength: {
+            value: 8,
+            message: 'Password should contain 8 characters',
+          },
+        }}
+        render={({field: {onChange, value}}) => (
+          <TextInput
+            mode="outlined"
+            label="Password"
+            returnKeyType="next"
+            value={value}
+            style={{marginTop: 10}}
+            onChangeText={text => onChange(text)}
+            secureTextEntry
+          />
+        )}
+        name="password"
+      />
+      {errors.password && (
+        <HelperText style={{color: 'red'}}>
+          {errors.password.message}
+        </HelperText>
+      )}
+      <Controller
+        control={control}
+        rules={{
+          required: true,
+        }}
+        render={({field: {onChange, value}}) => (
+          <TextInput
+            mode="outlined"
+            label="Confirm password"
+            returnKeyType="next"
+            value={value}
+            style={{marginTop: 10}}
+            onChangeText={text => onChange(text)}
+            secureTextEntry
+          />
+        )}
+        name="confirmPassword"
+      />
+      {errors.confirmPassword && (
+        <HelperText style={{color: 'red'}}>
+          {errors.confirmPassword.message}
+        </HelperText>
+      )}
+      <Button
+        mode="contained"
+        onPress={handleSubmit(_onSignUpPressed)}
+        style={styles.button}>
+        Sign Up
+      </Button>
+
+      <View style={styles.row}>
+        <Text style={styles.label}>Already have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate(nav.LOGIN)}>
+          <Text style={styles.link}>Login</Text>
+        </TouchableOpacity>
+      </View>
+    </Background>
+  );
+});
+
+const styles = StyleSheet.create({
+  label: {
+    color: theme.colors.secondary,
+  },
+  button: {
+    marginTop: 24,
+  },
+  row: {
+    flexDirection: 'row',
+    marginTop: 5,
+    justifyContent: 'center',
+  },
+  link: {
+    fontWeight: 'bold',
+    color: theme.colors.primary,
+  },
+});
