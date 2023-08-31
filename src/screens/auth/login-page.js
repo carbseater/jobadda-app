@@ -11,6 +11,8 @@ import {emailValidator, passwordValidator} from '../../core/utils';
 import {Navigation} from '../types';
 import {nav} from 'constants/navigation';
 import {useAuth} from 'AuthContext';
+import {getUserData} from 'firebase-database/read-operations';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const LoginScreen = memo(({navigation}) => {
   const [email, setEmail] = useState({value: '', error: ''});
@@ -28,11 +30,13 @@ export const LoginScreen = memo(({navigation}) => {
       return;
     }
     try {
-      const user = await signInWithEmailAndPassword(
-        email.value,
-        password.value,
-      );
-      console.log('User signed in succesfully', user);
+      const {
+        user: {uid},
+      } = await signInWithEmailAndPassword(email.value, password.value);
+      const userData = await getUserData(uid);
+      console.log('User data', userData);
+      await AsyncStorage.setItem('@userProfile', JSON.stringify(userData));
+      // console.log('User signed in succesfully', user);
     } catch (err) {
       console.log('Login error', err);
     }

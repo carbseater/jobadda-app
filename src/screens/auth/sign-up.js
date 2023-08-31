@@ -17,6 +17,8 @@ import {useAuth} from 'AuthContext';
 import {Controller, useForm} from 'react-hook-form';
 import {HelperText, Menu, TextInput, TouchableRipple} from 'react-native-paper';
 import {signUp} from 'firebase-database/write-operations';
+import Dropdown from 'components/Dropdown';
+import {cityOptions} from 'constants/dropdown-options';
 
 export const SignUpScreen = memo(({navigation}) => {
   const {signUpWithEmailAndPassword} = useAuth();
@@ -46,12 +48,7 @@ export const SignUpScreen = memo(({navigation}) => {
       console.log(err);
     }
   };
-  const cityOptions = {
-    noida: 'Noida',
-    greater_noida: 'Greater noida',
-    bhangel: 'Bhangel',
-    ghaziabad: 'Ghaziabad',
-  };
+
   // console.log('Errors', errors);
   return (
     <Background>
@@ -119,46 +116,13 @@ export const SignUpScreen = memo(({navigation}) => {
           required: 'City name is required',
         }}
         render={({field: {onChange, value}}) => (
-          <Menu
-            visible={cityDropdownVisible}
-            onDismiss={() => setCityDropdownVisible(false)}
-            contentStyle={
-              {
-                // backgroundColor: colors.primaryContainer,
-              }
-            }
-            anchor={
-              <TouchableRipple onPress={() => setCityDropdownVisible(true)}>
-                <View pointerEvents={'none'}>
-                  <TextInput
-                    value={cityOptions[value]}
-                    mode={'outlined'}
-                    label={'Select city'}
-                    pointerEvents={'none'}
-                    style={{marginTop: 10}}
-                    right={
-                      <TextInput.Icon
-                        icon={cityDropdownVisible ? 'menu-up' : 'menu-down'}
-                      />
-                    }
-                  />
-                </View>
-              </TouchableRipple>
-            }>
-            {Object.entries(cityOptions)?.map(([key, value]) => {
-              // console.log(key, value);
-              return (
-                <Menu.Item
-                  key={key}
-                  title={value}
-                  onPress={() => {
-                    onChange(key);
-                    setCityDropdownVisible(false);
-                  }}
-                />
-              );
-            })}
-          </Menu>
+          <Dropdown
+            dropdownOptions={cityOptions}
+            label={'City'}
+            disabled={false}
+            onChange={onChange}
+            value={value}
+          />
         )}
         name="city"
       />

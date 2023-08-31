@@ -10,11 +10,12 @@ import {useAuth} from 'AuthContext';
 import HomePage from 'screens/app/home-page';
 import {AuthStack} from './auth-stack';
 import {AppStack} from './app-stack';
+import {theme} from 'core/theme';
 const Stack = createNativeStackNavigator();
 const Routes = () => {
   const {currentUser} = useAuth();
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={theme}>
       {currentUser ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   );
