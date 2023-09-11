@@ -5,4 +5,5 @@ export const nav = {
   HOMEPAGE: 'Homepage',
   BOTTOM_TAB: 'Bottom tab bar',
   JOB_LISTING: 'Job listing',
+  JOB_DETAILS: 'Job details',
 };

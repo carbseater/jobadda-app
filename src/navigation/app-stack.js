@@ -4,17 +4,43 @@ import {nav} from 'constants/navigation';
 import {UserProfileScreen} from 'screens/app/profile-page/user-profile';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {MyWork} from 'screens/app/my-work/my-work';
-import {
-  JobListingPage,
-  JobListingPageWithPagination,
-} from 'screens/app/listing-page/listing-page';
-import {IconButton, Text} from 'react-native-paper';
+import {JobListingPage} from 'screens/app/listing-page/listing-page';
+import {IconButton, Text, TouchableRipple} from 'react-native-paper';
 import {useAuth} from 'AuthContext';
 import {View} from 'react-native';
+import React from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {JobDetail} from 'screens/app/job-details/job-detail';
 
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
 
+export const JobStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name={nav.JOB_LISTING}
+        component={JobListingPage}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={nav.JOB_DETAILS}
+        component={JobDetail}
+        options={{
+          headerRight: () => null,
+          headerShown: false,
+          title: '',
+          headerStyle: {
+            backgroundColor: 'white', // Set your desired background color here
+          },
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
 export const BottomTabStack = () => {
   const {logout} = useAuth();
   return (
@@ -27,8 +53,8 @@ export const BottomTabStack = () => {
         tabBarHideOnKeyboard: true,
       }}>
       <BottomTab.Screen
-        name={nav.JOB_LISTING}
-        component={JobListingPage}
+        name={'jobStack'}
+        component={JobStack}
         options={{
           tabBarIcon: props => (
             <View style={{alignItems: 'center'}}>

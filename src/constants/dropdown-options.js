@@ -17,6 +17,15 @@ export const cityOptions = [
   },
 ];
 
+export const workShift = [
+  {id: 'nightShift', name: 'Night shift'},
+  {id: 'dayShift', name: 'Day shift'},
+];
+
+export const sortOption = [
+  {id: 'lowToHigh', name: 'Low to high salary'},
+  {id: 'highToLow', name: 'High to low salary'},
+];
 export const genderOptions = [
   {
     id: 'male',

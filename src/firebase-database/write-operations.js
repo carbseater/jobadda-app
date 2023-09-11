@@ -36,3 +36,5 @@ export const addWorkExperience = async (data, userId) => {
     .ref(`departments/${departmentName.id}/${jobTitle.id}/${userId}`)
     .set(userId);
 };
+
+export const applyForJob = async (data, userId) => {};
