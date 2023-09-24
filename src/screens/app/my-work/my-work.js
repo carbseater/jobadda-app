@@ -1,6 +1,7 @@
 import {View, Text, StatusBar} from 'react-native';
 import React, {useState} from 'react';
 import {SegmentedButtons} from 'react-native-paper';
+import {useUserData} from '../../../UserContext';
 
 export const MyWork = () => {
   const [formKey, setFormKey] = useState('applied_jobs');
@@ -16,6 +17,7 @@ export const MyWork = () => {
       icon: 'bell-badge',
     },
   ];
+  const {appliedJobs} = useUserData();
   return (
     <View>
       <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
@@ -23,7 +25,13 @@ export const MyWork = () => {
         value={formKey}
         onValueChange={setFormKey}
         buttons={segmentButton}
+        style={{borderRadius: 8}}
       />
+      <View>
+        {Object.entries(appliedJobs).map(([jobId, jobData]) => (
+          <Text>{jobId}</Text>
+        ))}
+      </View>
     </View>
   );
 };

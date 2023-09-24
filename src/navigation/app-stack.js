@@ -11,6 +11,7 @@ import {View} from 'react-native';
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {JobDetail} from 'screens/app/job-details/job-detail';
+import {scale} from 'react-native-size-matters';
 
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -47,7 +48,7 @@ export const BottomTabStack = () => {
     <BottomTab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: 'black',
+          minHeight: scale(50),
         },
         tabBarShowLabel: false,
         tabBarHideOnKeyboard: true,
@@ -58,13 +59,8 @@ export const BottomTabStack = () => {
         options={{
           tabBarIcon: props => (
             <View style={{alignItems: 'center'}}>
-              <Icon
-                name="manage-search"
-                size={25}
-                color={props.focused ? 'white' : 'grey'}
-              />
-              <Text
-                style={{color: props.focused ? 'white' : 'grey', fontSize: 12}}>
+              <Icon name="manage-search" size={25} color={props.color} />
+              <Text style={{color: props.color, fontSize: 12}}>
                 Job listing
               </Text>
             </View>
@@ -79,14 +75,8 @@ export const BottomTabStack = () => {
         options={{
           tabBarIcon: props => (
             <View style={{alignItems: 'center'}}>
-              <Icon
-                name="work"
-                size={25}
-                color={props.focused ? 'white' : 'grey'}
-              />
-              <Text style={{color: props.focused ? 'white' : 'grey'}}>
-                Work
-              </Text>
+              <Icon name={'work-outline'} size={25} color={props.color} />
+              <Text style={{color: props.color}}>Work</Text>
             </View>
           ),
           headerShown: false,
@@ -97,14 +87,8 @@ export const BottomTabStack = () => {
           headerShown: false,
           tabBarIcon: props => (
             <View style={{alignItems: 'center'}}>
-              <Icon
-                name="account-circle"
-                size={25}
-                color={props.focused ? 'white' : 'grey'}
-              />
-              <Text style={{color: props.focused ? 'white' : 'grey'}}>
-                Profile
-              </Text>
+              <Icon name="account-circle" size={25} color={props.color} />
+              <Text style={{color: props.color}}>Profile</Text>
             </View>
           ),
           unmountOnBlur: true,

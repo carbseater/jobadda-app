@@ -1,5 +1,6 @@
 import database from '@react-native-firebase/database';
-
+import db from '@react-native-firebase/firestore';
+import {collection} from 'constants/dbConstants';
 export const signUp = async ({
   firstName,
   lastName,
@@ -8,21 +9,13 @@ export const signUp = async ({
   state = 'uttar_pradesh',
   userId,
 }) => {
-  await database()
-    .ref('workers/' + userId)
-    .set({
-      firstName,
-      lastName,
-      city,
-      email,
-      state,
-    })
-    .then(() => console.log('Data set.'));
-
-  database()
-    .ref('states/' + state + '/' + city + '/workers')
-    .push(userId)
-    .then(() => console.log('City set'));
+  await db().collection(collection.EMPLOYEE).doc(userId).set({
+    firstName,
+    lastName,
+    city,
+    email,
+    state,
+  });
 };
 
 export const addWorkExperience = async (data, userId) => {
@@ -37,4 +30,27 @@ export const addWorkExperience = async (data, userId) => {
     .set(userId);
 };
 
-export const applyForJob = async (data, userId) => {};
+export const applyForJob = async (data, userId, jobId, userProfileData) => {
+  const batch = db().batch();
+
+  const jobApplicationRef = db()
+    .collection(collection.JOB_OPENING)
+    .doc(jobId)
+    .collection(collection.JOB_APPLICATIONS)
+    .doc(userId);
+  const userAppliedJobsRef = db()
+    .collection(collection.EMPLOYEE)
+    .doc(userId)
+    .collection(collection.APPLIED_JOBS)
+    .doc(jobId);
+  batch.set(jobApplicationRef, {...userProfileData, status: 'pending'});
+  batch.set(userAppliedJobsRef, data);
+  batch
+    .commit()
+    .then(() => {
+      console.log('Document added to the collection using a batch.');
+    })
+    .catch(error => {
+      console.error('Error adding document using a batch:', error);
+    });
+};

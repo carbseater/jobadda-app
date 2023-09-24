@@ -54,12 +54,13 @@ export const UserProfileScreen = () => {
   const [workExperienceFormVisible, setWorkExperienceFormVisible] =
     useState(false);
   const currentFormValues = watch();
-  console.log(currentFormValues);
+  // console.log(currentFormValues);
   const {gender, marriedStatus} = currentFormValues ?? {};
   const [formKey, setFormKey] = useState('work_experience');
   const [workExperience, setWorkExperience] = useState(null);
   const {
     currentUser: {uid},
+    logout,
   } = useAuth();
 
   const getUserProfile = async () => {
@@ -151,7 +152,8 @@ export const UserProfileScreen = () => {
         <View style={{minHeight: scale(windowHeight * 0.68)}}>
           {!isFormEditable && (
             <Button
-              onPress={() => setIsFormEditable(true)}
+              // onPress={() => setIsFormEditable(true)}
+              onPress={() => logout()}
               compact
               mode="contained"
               icon={'pen'}
@@ -161,7 +163,7 @@ export const UserProfileScreen = () => {
                 alignSelf: 'flex-end',
                 borderRadius: 2,
               }}>
-              Edit
+              Logout
             </Button>
           )}
 

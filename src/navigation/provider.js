@@ -5,6 +5,7 @@ import {lightTheme} from 'config/theme';
 import {AuthProvider} from 'AuthContext';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {theme} from 'core/theme';
+import {UserProvider} from '../UserContext';
 
 const Provider = () => {
   return (

@@ -2,11 +2,11 @@ import moment from 'moment';
 
 export const extendedFunctions = {
   getAgeFromDate: (date, unit = 'years') => {
-    console.log(date);
+    // console.log(date);
     const momentAgeDate = moment(date, moment.ISO_8601);
     if (!momentAgeDate.isValid()) return '';
     const d = moment().diff(momentAgeDate, unit);
-    console.log('Age', d);
+    // console.log('Age', d);
     return d.toString();
   },
   // getDateDiff: (startDate, endDate, unit, isAbsolute = true) => {

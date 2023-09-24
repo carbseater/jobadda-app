@@ -7,6 +7,7 @@ import {
   Avatar,
   Text,
   TouchableRipple,
+  Surface,
 } from 'react-native-paper';
 import {scale} from 'react-native-size-matters';
 import {padding} from 'styleConfig/padding';
@@ -21,9 +22,13 @@ import {useNavigation} from '@react-navigation/native';
 import {nav} from 'constants/navigation';
 export const JobCard = ({jobData}) => {
   const {
-    aboutJob: {companyCity, companyName, jobTitle, jobType} = {},
-    metaData: {timestamp} = {},
-    salaryStructure: {maximumSalary, minimumSalary} = {},
+    companyCity,
+    companyName,
+    jobTitle,
+    jobType,
+    timestamp,
+    maximumSalary,
+    minimumSalary,
     workBenefits: {
       nightShiftAvailable,
       providentFundAvailable,
@@ -37,10 +42,10 @@ export const JobCard = ({jobData}) => {
   const {colors} = useTheme();
   const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <Surface style={styles.container}>
       <View style={{flexDirection: 'row', gap: 5}}>
         <MaterialCommunityIcons
-          color="grey"
+          color={colors.onPrimaryContainer}
           size={40}
           name={'office-building'}
           style={{flex: 0.1}}
@@ -55,9 +60,9 @@ export const JobCard = ({jobData}) => {
             <View>
               <Text
                 style={{
-                  fontWeight: 'bold',
                   color: 'black',
                   fontSize: scale(15),
+                  fontWeight: '800',
                 }}>
                 {companyName}
               </Text>
@@ -76,21 +81,23 @@ export const JobCard = ({jobData}) => {
               <MaterialIcon
                 name={'arrow-forward-ios'}
                 size={15}
+                color={colors.primary}
                 style={{padding: padding.small}}
               />
             </TouchableRipple>
           </View>
-          <Paragraph style={{color: 'grey'}}>
+          <Text style={{color: colors.primary, fontSize: 18}}>
             ₹{formatIndianCurrency(minimumSalary)} - ₹
             {formatIndianCurrency(maximumSalary)}
-          </Paragraph>
+          </Text>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'flex-end',
             }}>
-            <View
+            <Surface
+              mode={'flat'}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -98,30 +105,30 @@ export const JobCard = ({jobData}) => {
                 paddingVertical: 2,
                 gap: 3,
                 justifyContent: 'center',
-                backgroundColor: '#e6eaea',
+                // backgroundColor: '#e6eaea',
                 borderRadius: 5,
               }}>
               <MaterialIcon color="#454A64" name="location-pin" />
               <Text style={{fontSize: 13, color: '#454A64'}}>
                 {companyCity}
               </Text>
-            </View>
+            </Surface>
             <Text style={{fontSize: 10}}>{getRelativeDate(timestamp)}</Text>
           </View>
         </View>
       </View>
-    </View>
+    </Surface>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     minHeight: scale(80),
-    borderWidth: 0.2,
-    borderRadius: scale(4),
+    borderWidth: 0.3,
+    borderRadius: scale(5),
     borderColor: 'grey',
     marginVertical: scale(10),
-    padding: padding.small,
+    padding: padding.smallLg,
     elevation: 8,
     shadowColor: '#b2aeae',
     backgroundColor: 'white',

@@ -39,7 +39,7 @@ export const WorkExperienceForm = ({visible, dismiss, defaultValues}) => {
   } = useAuth();
   // console.log('UserId', uid);
   const onSubmit = async data => {
-    console.log(data);
+    // console.log(data);
     try {
       await addWorkExperience(data, uid);
     } catch (err) {

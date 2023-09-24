@@ -13,7 +13,7 @@ const DropdownPresenter = ({
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const {colors} = useTheme();
-  console.log(dropdownOptions);
+  // console.log(dropdownOptions);
   return (
     <View style={{marginVertical: scale(5)}}>
       <Menu

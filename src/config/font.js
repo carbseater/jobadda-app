@@ -1,4 +1,4 @@
-import {MD3LightTheme} from 'react-native-paper';
+import {configureFonts, MD3LightTheme} from 'react-native-paper';
 
 export const fontConfig = {
   ios: {
@@ -39,11 +39,35 @@ export const fontConfig = {
   },
 };
 
-export const customThemeFonts = Object.fromEntries(
-  Object.entries(MD3LightTheme.fonts).map(
-    ([variantName, variantProperties]) => [
-      variantName,
-      {...variantProperties, fontFamily: 'Poppins'},
-    ],
-  ),
-);
+const baseFont = {
+  fontFamily: 'Poppins-Regular',
+};
+
+const baseVariants = configureFonts({config: baseFont});
+export const customVariants = {
+  // Customize individual base variants:
+  displayMedium: {
+    ...baseVariants.displayMedium,
+    fontFamily: 'Poppins-Bold',
+  },
+
+  // Add own tokens if required:
+  bold: {
+    ...baseVariants.bodyMedium,
+    fontFamily: 'Poppins-Bold',
+  },
+  italic: {
+    ...baseVariants.bodyMedium,
+    fontFamily: 'Poppins-Italic',
+  },
+  boldItalic: {
+    ...baseVariants.bodyMedium,
+    fontFamily: 'Poppins-BoldItalic',
+  },
+};
+export const fonts = configureFonts({
+  config: {
+    ...baseVariants,
+    ...customVariants,
+  },
+});

@@ -6,20 +6,24 @@ import {
   TouchableRipple,
   RadioButton,
   Button,
+  Surface,
+  useTheme,
 } from 'react-native-paper';
 import {scale} from 'react-native-size-matters';
 import React from 'react';
-import {windowWidth} from 'utils/dimension';
 import {padding} from '../../../styleConfig/padding';
-import {margin} from '../../../styleConfig/margin';
+import uuid from 'react-native-uuid';
 import Slider from '@react-native-community/slider';
 import {formatIndianCurrency} from 'utils/general-fn';
-import {SelectedFilterRow} from 'screens/app/listing-page/filters';
+import {
+  jobFilters,
+  jobFilters1,
+  SelectedFilterRow,
+} from 'screens/app/listing-page/filters';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const FilterModal = ({filters, setFilters, visible, onDismiss}) => {
-  // console.log(filters);
-  console.log(filters);
+  const {colors} = useTheme();
   const handleLabelClick = key => {
     setFilters(prevState => {
       const newState = {};
@@ -36,7 +40,7 @@ export const FilterModal = ({filters, setFilters, visible, onDismiss}) => {
   // Function to handle checkbox selection
   const handleCheckboxToggle = (filterKey, id) => {
     // Check if the option is already selected
-    let selectedOptions = filters[filterKey].value;
+    let selectedOptions = [...filters[filterKey].value];
     if (selectedOptions?.includes(id)) {
       selectedOptions = selectedOptions.filter(option => option != id);
     } else {
@@ -52,6 +56,7 @@ export const FilterModal = ({filters, setFilters, visible, onDismiss}) => {
   };
 
   const handleSliderValue = (filterKey, value) => {
+    // console.log(filterKey, value);
     const roundedValue = Math.round(value);
     setFilters(prevState => ({
       ...prevState,
@@ -65,69 +70,97 @@ export const FilterModal = ({filters, setFilters, visible, onDismiss}) => {
       [filterKey]: {...prevState[filterKey], value: value},
     }));
   };
+  // console.log(filters);
+  const clearFilter = () => {
+    // console.log('Clicked');
+    // console.log('Initial Job', jobFilters1.salary);
+    const initial = Object.assign({}, jobFilters1);
+    setFilters(prevState => initial);
+    // console.log('Done');
+  };
   const renderSelectedFilters = () => {
+    const selectedFilter = Object.entries(filters).filter(
+      ([filterName, filter]) => filter.selected === true,
+    )[0];
+
+    const [key, filter] = selectedFilter;
+    const {options, element, value, minValue, maxValue} = filter ?? {};
+    // console.log('Selected', key, filter);
+    return (
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {element === 'checkBox' ? (
+          options.map(option => {
+            const isSelected = value.includes(option.id);
+            return (
+              <View style={styles.checkBox}>
+                <Checkbox
+                  status={isSelected ? 'checked' : 'unchecked'}
+                  onPress={() => handleCheckboxToggle(key, option.id)}
+                />
+                <Text variant={isSelected && 'bold'}>{option.name}</Text>
+              </View>
+            );
+          })
+        ) : element === 'rangePicker' ? (
+          <View style={styles.rangePicker}>
+            <View style={{padding: 10}}>
+              <Text>Minimum salary</Text>
+              <Text style={{fontSize: 20}}>
+                ₹ {formatIndianCurrency(filter.value || filter.initialValue)}
+              </Text>
+            </View>
+
+            <Slider
+              step={1000}
+              thumbTintColor={colors.primary}
+              value={filter.value}
+              maximumValue={maxValue}
+              minimumValue={minValue}
+              onValueChange={value => handleSliderValue(key, value)}
+            />
+          </View>
+        ) : (
+          <View style={{padding: 10}}>
+            {options.map(option => {
+              return (
+                <View style={styles.radioButton}>
+                  <RadioButton
+                    value={value}
+                    status={value === option.id ? 'checked' : 'unchecked'}
+                    onPress={() => handleRadioButton(key, option.id)}
+                  />
+                  <Text>{option.name}</Text>
+                </View>
+              );
+            })}
+          </View>
+        )}
+      </ScrollView>
+    );
+  };
+
+  const renderFilterLabel = () => {
     return (
       <ScrollView showsVerticalScrollIndicator={false}>
         {Object.entries(filters).map(([key, filter]) => {
-          if (filter.selected) {
-            const {options, element} = filter;
-            console.log('options', options);
-            if (element === 'checkBox') {
-              return options.map(option => {
-                return (
-                  <View style={styles.checkBox}>
-                    <Checkbox
-                      status={
-                        filters[key].value?.includes(option.id)
-                          ? 'checked'
-                          : 'unchecked'
-                      }
-                      onPress={() => handleCheckboxToggle(key, option.id)}
-                    />
-                    <Text>{option.name}</Text>
-                  </View>
-                );
-              });
-            } else if (element === 'rangePicker') {
-              const {maxValue, minValue, value} = filter;
-
-              return (
-                <View style={styles.rangePicker}>
-                  <Text>Minimum salary</Text>
-                  <Text>
-                    {formatIndianCurrency(filter.value || filter.initialValue)}
-                  </Text>
-                  <Slider
-                    step={1000}
-                    value={value}
-                    maximumValue={maxValue}
-                    minimumValue={minValue}
-                    onValueChange={value => handleSliderValue(key, value)}
-                  />
-                </View>
-              );
-            } else {
-              const {value, initialValue} = filter;
-              return (
-                <View style={{}}>
-                  {options.map(option => {
-                    return (
-                      <View style={styles.radioButton}>
-                        <RadioButton
-                          value={value}
-                          status={value === option.id ? 'checked' : 'unchecked'}
-                          onPress={() => handleRadioButton(key, option.id)}
-                        />
-                        <Text>{option.name}</Text>
-                      </View>
-                    );
-                  })}
-                </View>
-              );
-            }
-            // return <Text>{filter.label}</Text>;
-          }
-          return null; // Filter is not selected, don't render it
+          return (
+            <TouchableRipple
+              key={uuid.v4()}
+              onPress={() => handleLabelClick(key)}>
+              <Surface
+                mode={filters[key].selected ? 'elevated' : 'flat'}
+                // elevation={'8'}
+                style={[
+                  styles.labelBox,
+                  {
+                    backgroundColor:
+                      filters[key].selected && colors.surfaceVariant,
+                  },
+                ]}>
+                <Text>{filter.label}</Text>
+              </Surface>
+            </TouchableRipple>
+          );
         })}
       </ScrollView>
     );
@@ -139,48 +172,41 @@ export const FilterModal = ({filters, setFilters, visible, onDismiss}) => {
       visible={visible}
       onRequestClose={() => onDismiss(false)}>
       <View style={styles.centeredView}>
-        <View style={styles.container}>
-          <View style={styles.head}>
-            <Text style={{fontSize: 15}}>Filters</Text>
+        <Surface mode={'flat'} style={styles.container}>
+          <Surface mode={'flat'} style={styles.head}>
+            <Text style={{fontSize: 18}}>Filters</Text>
             <TouchableRipple onPress={() => onDismiss(false)}>
-              <MaterialCommunityIcons name={'close'} size={25} />
+              <MaterialCommunityIcons
+                name={'close'}
+                color={colors.primary}
+                size={25}
+              />
             </TouchableRipple>
-          </View>
-          <Divider />
-          <View style={styles.body}>
-            <View style={styles.leftSection}>
-              {Object.entries(filters).map(([key, filter]) => {
-                return (
-                  <TouchableRipple onPress={() => handleLabelClick(key)}>
-                    <View
-                      style={[
-                        styles.labelBox,
-                        {
-                          backgroundColor: filters[key].selected
-                            ? '#dadbdb'
-                            : 'white',
-                        },
-                      ]}>
-                      <Text>{filter.label}</Text>
-                    </View>
-                  </TouchableRipple>
-                );
-              })}
-            </View>
-            <Divider />
-            <View style={styles.rightSection}>{renderSelectedFilters()}</View>
-          </View>
-          <View style={styles.footer}>
+          </Surface>
+
+          <Surface mode={'flat'} style={styles.body}>
+            <Surface style={styles.leftSection}>{renderFilterLabel()}</Surface>
+
+            <Surface style={styles.rightSection}>
+              {renderSelectedFilters()}
+            </Surface>
+          </Surface>
+          <Surface style={styles.footer}>
             <SelectedFilterRow filters={filters} setFilters={setFilters} />
             <Divider />
-            <View style={styles.actionButton}>
-              <Button style={{flex: 0.5}}>Clear filters</Button>
-              <Button mode={'contained'} style={{borderRadius: 5, flex: 0.5}}>
+            <Surface style={styles.actionButton}>
+              <Button style={{flex: 0.5}} onPress={clearFilter}>
+                Clear filters
+              </Button>
+              <Button
+                mode={'contained'}
+                onPress={() => onDismiss()}
+                style={{borderRadius: 5, flex: 0.5}}>
                 Apply filter
               </Button>
-            </View>
-          </View>
-        </View>
+            </Surface>
+          </Surface>
+        </Surface>
       </View>
     </Modal>
   );
@@ -205,11 +231,9 @@ const styles = StyleSheet.create({
   },
   leftSection: {
     flex: 0.3,
-    borderRightWidth: 0.2,
   },
   labelBox: {
     justifyContent: 'center',
-    borderBottomWidth: 0.2,
     padding: padding.small,
   },
   rightSection: {
@@ -250,6 +274,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: scale(50),
+    paddingHorizontal: padding.small,
   },
   text: {fontSize: scale(20)},
 });

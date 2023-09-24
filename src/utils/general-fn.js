@@ -34,39 +34,43 @@ export const truncateString = (str, maxLength) => {
 
 export const getRelativeDate = timestamp => {
   // Convert Firestore timestamp to a JavaScript Date object
-  const postDate = timestamp.toDate();
+  try {
+    const postDate = timestamp.toDate();
 
-  // Get the current date
-  const currentDate = new Date();
+    // Get the current date
+    const currentDate = new Date();
 
-  // Calculate the time difference in milliseconds
-  const timeDifference = currentDate - postDate;
+    // Calculate the time difference in milliseconds
+    const timeDifference = currentDate - postDate;
 
-  // Calculate the number of days
-  const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
-  const daysDifference = Math.floor(hoursDifference / 24);
-  if (hoursDifference <= 0) {
-    return 'Just now';
-  } else if (hoursDifference <= 24) {
-    return `${hoursDifference} hr ago`;
-  } else if (daysDifference <= 0) {
-    return 'Today';
-  } else if (daysDifference <= 30) {
-    return `${daysDifference} d ago`;
-  } else {
-    const monthsDifference = Math.floor(daysDifference / 30);
-    if (monthsDifference <= 12) {
-      return `${monthsDifference} mon ago`;
+    // Calculate the number of days
+    const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
+    const daysDifference = Math.floor(hoursDifference / 24);
+    if (hoursDifference <= 0) {
+      return 'Just now';
+    } else if (hoursDifference <= 24) {
+      return `${hoursDifference} hr ago`;
+    } else if (daysDifference <= 0) {
+      return 'Today';
+    } else if (daysDifference <= 30) {
+      return `${daysDifference} d ago`;
     } else {
-      const yearsDifference = Math.floor(monthsDifference / 12);
-      return `${yearsDifference} yr ago`;
+      const monthsDifference = Math.floor(daysDifference / 30);
+      if (monthsDifference <= 12) {
+        return `${monthsDifference} mon ago`;
+      } else {
+        const yearsDifference = Math.floor(monthsDifference / 12);
+        return `${yearsDifference} yr ago`;
+      }
     }
+  } catch (e) {
+    console.log(e);
   }
 };
 
 export const isObjectNullOrEmpty = obj => {
   // Check if the object is null or undefined
-  console.log('Check', obj);
+  // console.log('Check', obj);
   if (obj === null || typeof obj === 'undefined') {
     return true;
   }
