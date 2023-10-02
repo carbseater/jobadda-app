@@ -64,7 +64,7 @@ export const getRelativeDate = timestamp => {
       }
     }
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 };
 

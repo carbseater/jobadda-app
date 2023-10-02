@@ -28,7 +28,7 @@ export const UserProvider = ({children}) => {
       .doc(uid)
       .collection(collection.APPLIED_JOBS)
       .onSnapshot(collectionSnapshot => {
-        console.log('Applied job changed-------------');
+        // console.log('Applied job changed-------------');
         const jobDocument = {};
         collectionSnapshot.docs.forEach(
           doc => (jobDocument[doc.id] = doc.data()),
@@ -46,7 +46,7 @@ export const UserProvider = ({children}) => {
   // const addNewJobToState = jobData => {
   //   setAppliedJobs(prevState => [...prevState, {...jobData}]);
   // };
-  console.log('Applied jobs', appliedJobs);
+  // console.log('Applied jobs', appliedJobs);
   const value = {
     appliedJobs,
     userData,

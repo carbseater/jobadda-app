@@ -13,28 +13,29 @@ import {padding} from '../../../styleConfig/padding';
 export const jobFilters = {
   department: {
     selected: true,
-    dbPath: 'aboutJob.jobDepartment',
+    dbPath: 'jobDepartment',
     label: 'Department',
     value: [],
     multipleValue: true,
     element: 'checkBox',
+    operator : "in",
     options: departments,
   },
   city: {
-    selected: false,
-    dbPath: 'aboutJob.companyCity',
+    selected: true,
+    dbPath: 'companyCity',
     label: 'City',
     initialValue: 'noida',
-    value: ['noida'],
+    value: ['Noida'],
     multipleValue: true,
     element: 'checkBox',
     options: cityOptions,
     clause: 'where',
-    operator: '==',
+    operator: 'in',
   },
   salary: {
     selected: false,
-    dbPath: 'salaryStructure.minimumSalary',
+    dbPath: 'minimumSalary',
     id: 'salary',
     label: 'Salary',
     initialValue: 5000,
@@ -48,13 +49,14 @@ export const jobFilters = {
   },
   workShift: {
     selected: false,
-    dbPath: 'workBenefits.nightShiftAvailable.available',
+    dbPath: 'workshifts',
     id: 'workShift',
     label: 'Work shift',
     value: [],
     multipleValue: true,
     element: 'checkBox',
     options: workShift,
+    operator:'array-contains-any'
   },
   sortBy: {
     selected: false,
@@ -70,16 +72,17 @@ export const jobFilters = {
 export const jobFilters1 = {
   department: {
     selected: true,
-    dbPath: 'aboutJob.jobDepartment',
+    dbPath: 'jobDepartment',
     label: 'Department',
     value: [],
     multipleValue: true,
     element: 'checkBox',
+    operator : "in",
     options: departments,
   },
   city: {
-    selected: false,
-    dbPath: 'aboutJob.companyCity',
+    selected: true,
+    dbPath: 'companyCity',
     label: 'City',
     initialValue: 'noida',
     value: ['noida'],
@@ -87,15 +90,15 @@ export const jobFilters1 = {
     element: 'checkBox',
     options: cityOptions,
     clause: 'where',
-    operator: '==',
+    operator: 'in',
   },
   salary: {
     selected: false,
-    dbPath: 'salaryStructure.minimumSalary',
+    dbPath: 'minimumSalary',
     id: 'salary',
     label: 'Salary',
     initialValue: 5000,
-    value: null,
+    value: 5000,
     multipleValue: false,
     element: 'rangePicker',
     minValue: 5000,
@@ -105,13 +108,14 @@ export const jobFilters1 = {
   },
   workShift: {
     selected: false,
-    dbPath: 'workBenefits.nightShiftAvailable.available',
+    dbPath: 'workshifts',
     id: 'workShift',
     label: 'Work shift',
     value: [],
     multipleValue: true,
     element: 'checkBox',
     options: workShift,
+    operator:'array-contains-any'
   },
   sortBy: {
     selected: false,
@@ -124,7 +128,7 @@ export const jobFilters1 = {
   },
 };
 
-export const SelectedFilterRow = ({filters, setFilters}) => {
+export const SelectedFilterRow = ({filters, setFilters,setIsFilterEdited}) => {
   const scrollViewRef = useRef(null);
   const handleRemoveFilter = filterName => {
     setFilters(prevState => ({
@@ -134,6 +138,8 @@ export const SelectedFilterRow = ({filters, setFilters}) => {
         value: jobFilters[filterName].value,
       },
     }));
+    console.log("I am setIsFilterEdited",setIsFilterEdited)
+    setIsFilterEdited(true);
   };
 
   const scrollToEnd = () => {

@@ -22,7 +22,7 @@ import {
 } from 'screens/app/listing-page/filters';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export const FilterModal = ({filters, setFilters, visible, onDismiss}) => {
+export const FilterModal = ({filters, setFilters, visible, onDismiss,loadData,setLastJobDocument,setIsFilterEdited}) => {
   const {colors} = useTheme();
   const handleLabelClick = key => {
     setFilters(prevState => {
@@ -56,7 +56,7 @@ export const FilterModal = ({filters, setFilters, visible, onDismiss}) => {
   };
 
   const handleSliderValue = (filterKey, value) => {
-    // console.log(filterKey, value);
+    console.log(filterKey, value);
     const roundedValue = Math.round(value);
     setFilters(prevState => ({
       ...prevState,
@@ -192,7 +192,7 @@ export const FilterModal = ({filters, setFilters, visible, onDismiss}) => {
             </Surface>
           </Surface>
           <Surface style={styles.footer}>
-            <SelectedFilterRow filters={filters} setFilters={setFilters} />
+            <SelectedFilterRow filters={filters} setFilters={setFilters} setIsFilterEdited={setIsFilterEdited}/>
             <Divider />
             <Surface style={styles.actionButton}>
               <Button style={{flex: 0.5}} onPress={clearFilter}>
@@ -200,7 +200,11 @@ export const FilterModal = ({filters, setFilters, visible, onDismiss}) => {
               </Button>
               <Button
                 mode={'contained'}
-                onPress={() => onDismiss()}
+                onPress={() => {
+                  setLastJobDocument(undefined);
+                  onDismiss();
+                  loadData(true);
+                }}
                 style={{borderRadius: 5, flex: 0.5}}>
                 Apply filter
               </Button>

@@ -33,10 +33,11 @@ export const ListingPagePresenter = ({
   setFilters,
   userData,
   refreshing,
-  onRefresh,
+  onRefresh,setLastJobDocument,setIsFilterEdited
 }) => {
   const {colors} = useTheme();
   const [filterVisible, setFilterVisible] = useState(false);
+
   // console.log('User', userData);
   return (
     <View style={{flex: 1}}>
@@ -84,13 +85,16 @@ export const ListingPagePresenter = ({
           )}
         />
         <FilterModal
+          loadData={loadData}
           visible={filterVisible}
           filters={filters}
           setFilters={setFilters}
           onDismiss={() => setFilterVisible(!filterVisible)}
+          setLastJobDocument={setLastJobDocument}
+          setIsFilterEdited={setIsFilterEdited}
         />
 
-        <SelectedFilterRow filters={filters} setFilters={setFilters} />
+        <SelectedFilterRow filters={filters} setFilters={setFilters} setIsFilterEdited={setIsFilterEdited} />
       </Surface>
 
       <View style={{paddingHorizontal: padding.small, flex: 1}}>
@@ -108,7 +112,7 @@ export const ListingPagePresenter = ({
           }}
           onScroll={handleScroll}
           ListFooterComponent={
-            <Button style={{height: 80}} onPress={loadData}>
+            <Button style={{height: 80}} onPress={()=>loadData(false)}>
               Load more
             </Button>
           }

@@ -10,15 +10,15 @@ import {useUserData} from '../../../UserContext';
 export const JobListingPage = ({navigation}) => {
   // const filterOptions = {...jobFilters};
   const [refreshing, setRefreshing] = useState(false);
+  const [isFilterEdited,setIsFilterEdited] = useState(false);
   const {userData} = useUserData();
-  const [filters, setFilters] = useState({...jobFilters});
+  const [filters, setFilters] = useState(jobFilters);
   const [listOfJobs, setListOfJobs] = useState([]);
   const [lastJobDocument, setLastJobDocument] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const flatListRef = useRef(null);
   const offsetRef = useRef(0);
   const limit = 10;
-  const jobOpenings = db().collection('jobOpenings');
   const handleScroll = event => {
     const currentOffset = event.nativeEvent.contentOffset.y;
     const dif = currentOffset - (offsetRef.current || 0);
@@ -42,25 +42,61 @@ export const JobListingPage = ({navigation}) => {
     offsetRef.current = currentOffset;
   };
 
-  async function LoadData() {
-    console.log('Last job', lastJobDocument);
+  const getFilterQuery = ()=>{
+    let jobOpenings = db().collection('jobOpenings');
+
+    let query = jobOpenings ;
+      Object.entries(filters).map(([key,val])=>{
+        const {dbPath,value, operator,selected}  = val;
+        // console.log("hii",dbPath,operator,value,selected, typeof value,key);
+
+        if(selected &&  key!='sortBy' && value) {
+          if( (typeof value === 'object' && value.length==0)){
+            return
+          }
+          query = query.where(dbPath, operator, value);
+          if(dbPath === 'minimumSalary'){
+            query = query.orderBy('minimumSalary','asc')
+          }
+        }
+        else if(key==='sortBy' && selected ){
+          const sort = value === 'highToLow' ? 'desc':'asc';
+          console.log(sort);
+          query = query.orderBy('minimumSalary',sort);
+        }
+
+        // console.log("hii",dbPath,operator,value,selected, typeof value);
+
+      })
+
+    return query;
+  }
+  async function LoadData(applyFilter=false) { // using apply filter to avoid suing last document
+    // console.log('Last job',filters);
     setIsLoading(true);
     try {
-      let query = jobOpenings
-        // .where('salaryStructure.minimumSalary', '==', '80000')
-        .orderBy('timestamp', 'desc');
 
+      let query = getFilterQuery()
+
+       // .where('jobDepartment', "==", 'engineering')
       // sort the data
-      if (lastJobDocument !== undefined) {
+      // console.log('I am lastJobDoc',lastJobDocument)
+      if (!applyFilter && lastJobDocument !== undefined) {
         query = query.startAfter(lastJobDocument); // fetch data following the last document accessed
       }
+
+      // console.log("I am query",query.&& (typeof value === Object && value.length))
       query
         .limit(limit) // limit to your page size, 3 is just an example
         .get()
         .then(querySnapshot => {
           const size = querySnapshot.size;
+          console.log("jobsss size ",querySnapshot.size)
           if (size === 0) {
             ToastAndroid.show('No more jobs founded', ToastAndroid.SHORT);
+            if(applyFilter){
+              setListOfJobs([])
+            }
             return;
           }
           setLastJobDocument(
@@ -70,7 +106,15 @@ export const JobListingPage = ({navigation}) => {
             ...job.data(),
             id: job.id,
           }));
-          setListOfJobs([...listOfJobs, ...jobs]);
+          console.log("Hee",applyFilter);
+
+          if(!applyFilter) {
+            setListOfJobs([...listOfJobs, ...jobs]);
+          }
+          else
+            setListOfJobs([...jobs])
+          // console.log("jobsss",jobs)
+
         });
     } catch (e) {
       console.error(e);
@@ -84,6 +128,14 @@ export const JobListingPage = ({navigation}) => {
   useEffect(() => {
     LoadData();
   }, []);
+
+  useEffect(() => {
+    if(isFilterEdited){
+      setIsFilterEdited(false);
+      console.log("hii isFiltered")
+      LoadData(true);
+    }
+  }, [isFilterEdited]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -111,6 +163,8 @@ export const JobListingPage = ({navigation}) => {
       userData={userData}
       refreshing={refreshing}
       onRefresh={onRefresh}
+      setLastJobDocument={setLastJobDocument}
+      setIsFilterEdited={setIsFilterEdited}
     />
   );
 };

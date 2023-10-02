@@ -29,6 +29,7 @@ export const JobCard = ({jobData}) => {
     timestamp,
     maximumSalary,
     minimumSalary,
+    jobDepartment,
     workBenefits: {
       nightShiftAvailable,
       providentFundAvailable,
@@ -70,7 +71,7 @@ export const JobCard = ({jobData}) => {
                 style={{
                   fontWeight: '300',
                   color: 'black',
-                }}>{`${jobTitle} • ${jobType}`}</Text>
+                }}>{`${jobTitle} • ${jobDepartment}`}</Text>
             </View>
 
             <TouchableRipple

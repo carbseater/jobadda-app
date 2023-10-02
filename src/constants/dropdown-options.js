@@ -1,18 +1,18 @@
 export const cityOptions = [
   {
-    id: 'noida',
+    id: 'Noida',
     name: 'Noida',
   },
   {
-    id: 'bhangel',
+    id: 'Bhangel',
     name: 'Bhangel',
   },
   {
-    id: 'greater_noida',
-    name: 'Greater noida',
+    id: 'Greater Noida',
+    name: 'Greater Noida',
   },
   {
-    id: 'ghaziabad',
+    id: 'Ghaziabad',
     name: 'Ghaziabad',
   },
 ];
