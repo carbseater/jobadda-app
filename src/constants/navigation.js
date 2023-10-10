@@ -6,4 +6,8 @@ export const nav = {
   BOTTOM_TAB: 'Bottom tab bar',
   JOB_LISTING: 'Job listing',
   JOB_DETAILS: 'Job details',
+  PROFILE: 'Profile',
+  WORK_EXP: 'Work experience',
+  APPLIED_JOB: 'Applied jobs',
+  JOB_INVITE: 'Job invites',
 };

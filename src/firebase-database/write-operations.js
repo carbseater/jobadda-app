@@ -1,6 +1,7 @@
 import database from '@react-native-firebase/database';
 import db from '@react-native-firebase/firestore';
 import {collection} from 'constants/dbConstants';
+import {nearestFiveYear} from 'utils/general-fn';
 export const signUp = async ({
   firstName,
   lastName,
@@ -32,7 +33,8 @@ export const addWorkExperience = async (data, userId) => {
 
 export const applyForJob = async (data, userId, jobId, userProfileData) => {
   const batch = db().batch();
-
+  const year = nearestFiveYear();
+  // console.log(year, userId);
   const jobApplicationRef = db()
     .collection(collection.JOB_OPENING)
     .doc(jobId)
@@ -42,9 +44,16 @@ export const applyForJob = async (data, userId, jobId, userProfileData) => {
     .collection(collection.EMPLOYEE)
     .doc(userId)
     .collection(collection.APPLIED_JOBS)
-    .doc(jobId);
+    .doc(year);
+  const appliedJobsArray = db()
+    .collection(collection.EMPLOYEE)
+    .doc(userId)
+    .collection(collection.APPLIED_JOBS)
+    .doc('appliedJobsArray');
+  // console.log('hello');
   batch.set(jobApplicationRef, {...userProfileData, status: 'pending'});
-  batch.set(userAppliedJobsRef, data);
+  batch.set(userAppliedJobsRef, {[jobId]: data}, {merge: true});
+  batch.set(appliedJobsArray, {jobIdArray: db.FieldValue.arrayUnion(jobId)});
   batch
     .commit()
     .then(() => {

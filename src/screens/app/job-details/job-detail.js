@@ -63,7 +63,8 @@ export const JobDetail = ({navigation, route}) => {
     currentUser: {uid},
   } = useAuth();
   const {appliedJobs} = useUserData();
-  const isAppliedAlready = appliedJobs[id];
+  console.log('AppliedJob', appliedJobs.includes(id));
+  const isAppliedAlready = appliedJobs.includes(id);
   const handlePhoneCall = () => {
     if (!employerMobileNo) {
       ToastAndroid.show('No contact found', ToastAndroid.SHORT);
@@ -104,12 +105,12 @@ export const JobDetail = ({navigation, route}) => {
   const jobDescription = `Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.`;
   const handleApplyJob = async () => {
     const payload = {
-      jobStatus: 'pending',
+      status: 'In review',
       companyName,
       jobTitle,
-      timestamp: db.FieldValue.serverTimestamp(),
+      appliedOn: db.FieldValue.serverTimestamp(),
       message: 'Your application is under review',
-      id: id,
+      contactNo: employerMobileNo,
     };
     console.log('payload', payload);
     try {
@@ -195,29 +196,31 @@ export const JobDetail = ({navigation, route}) => {
           </View>
         </Surface>
         {/*Benefits*/}
-        <View>
-          <Text variant="bold" style={{color: 'black'}}>
-            Benefits
-          </Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.benefitSection}>
-            {Object.entries(workBenefits).map(([key, benefit]) => {
-              return (
-                benefit.available && (
-                  <View style={styles.jobBenefits} key={benefit.id}>
-                    <Image
-                      source={image[benefit.id]}
-                      style={{resizeMode: 'cover', height: 40, width: 40}}
-                    />
-                    <Text style={{fontSize: 14}}>{benefit.label}</Text>
-                  </View>
-                )
-              );
-            })}
-          </ScrollView>
-        </View>
+        {workBenefits && (
+          <View>
+            <Text variant="bold" style={{color: 'black'}}>
+              Benefits
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.benefitSection}>
+              {Object.entries(workBenefits).map(([key, benefit]) => {
+                return (
+                  benefit.available && (
+                    <View style={styles.jobBenefits} key={benefit.id}>
+                      <Image
+                        source={image[benefit.id]}
+                        style={{resizeMode: 'cover', height: 40, width: 40}}
+                      />
+                      <Text style={{fontSize: 14}}>{benefit.label}</Text>
+                    </View>
+                  )
+                );
+              })}
+            </ScrollView>
+          </View>
+        )}
 
         {/*Job description*/}
         <View>
@@ -287,8 +290,7 @@ export const JobDetail = ({navigation, route}) => {
       {isAppliedAlready && (
         <Surface
           style={{
-            backgroundColor:
-              isAppliedAlready.jobStatus === 'pending' ? '#fbe385' : 'red',
+            backgroundColor: '#fbe385',
             padding: padding.small,
             flexDirection: 'row',
             alignItems: 'center',
@@ -297,7 +299,9 @@ export const JobDetail = ({navigation, route}) => {
             borderRadius: 5,
           }}>
           <AntDesign name={'infocirlceo'} color={'black'} />
-          <Text style={{fontSize: 15}}>{appliedJobs[id]?.message}</Text>
+          <Text style={{fontSize: 15}}>
+            {'You have succesfully applied for this job'}
+          </Text>
         </Surface>
       )}
       <Surface style={[styles.actionButton]}>

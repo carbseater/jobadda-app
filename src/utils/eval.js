@@ -23,8 +23,8 @@ export const extendedFunctions = {
   // },
 
   getDateDiff: (startDate, endDate) => {
-    const momentStartDate = moment(startDate, moment.ISO_8601);
-    const momentEndDate = moment(endDate, moment.ISO_8601);
+    const momentStartDate = moment(startDate, 'DD/MM/YYYY');
+    const momentEndDate = moment(endDate, 'DD/MM/YYYY');
 
     if (!momentStartDate.isValid() || !momentEndDate.isValid()) {
       return '';

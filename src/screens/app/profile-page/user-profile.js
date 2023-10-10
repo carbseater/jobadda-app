@@ -33,11 +33,12 @@ import {margin} from 'styleConfig/margin';
 import {padding} from 'styleConfig/padding';
 import {windowHeight} from 'utils/dimension';
 import {extendedFunctions} from 'utils/eval';
-import {WorkExperienceForm} from './work-experience';
-import database from '@react-native-firebase/database';
+import {WorkExperienceForm} from './work-experience/work-experience-form';
+import db from '@react-native-firebase/firestore';
 import {useAuth} from 'AuthContext';
 import {WorkExperienceCard} from './work-experience/work-experience-card';
 import RadioButton from 'components/RadioButton';
+import {collection} from 'constants/dbConstants';
 
 export const UserProfileScreen = () => {
   const {colors} = useTheme();
@@ -73,20 +74,6 @@ export const UserProfileScreen = () => {
       console.log('Error while fetching user', err);
     }
   };
-  useEffect(() => {
-    getUserProfile();
-    const onValueChange = database()
-      .ref(`/workers/${uid}/work_experience/`)
-      .on('value', snapshot => {
-        const workExperienceList = snapshot.val();
-        setWorkExperience(prevState => workExperienceList);
-      });
-
-    return () =>
-      database()
-        .ref(`/workers/${uid}/work_experience/`)
-        .off('value', onValueChange);
-  }, []);
 
   const userProfileForms = [
     {

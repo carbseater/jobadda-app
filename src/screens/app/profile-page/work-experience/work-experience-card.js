@@ -8,35 +8,37 @@ export const WorkExperienceCard = ({work}) => {
   const {
     companyName,
     departmentName,
-    jobTitle,
+    job_title,
+    employer,
     verifiedByJobAdda,
-    startDate,
-    endDate,
+    start_date,
+    end_date,
     aboutJob,
+    description,
+    location,
   } = work ?? {};
   const [isExpanded, setIsExpanded] = useState(false);
-  const tenure = extendedFunctions.getDateDiff(startDate, endDate);
+  const tenure = extendedFunctions.getDateDiff(start_date, end_date);
 
   return (
     <View style={styles.container}>
       <List.Accordion
         left={props => <List.Icon {...props} icon="domain" />}
-        title={jobTitle.name}
+        title={employer}
         titleStyle={{fontWeight: 'bold'}}
         style={{
           borderWidth: 0.5,
-
           borderBottomWidth: isExpanded ? 0 : 0.5,
         }}
         expanded={isExpanded}
         onPress={() => setIsExpanded(!isExpanded)}
-        description={companyName.trim() + ' - ' + tenure.trim()}>
+        description={job_title + ' - ' + tenure.trim()}>
         <List.Subheader
           style={{borderWidth: 0.5, borderTopWidth: 0}}
           numberOfLines={8}>
-          <Text style={{fontWeight: 'bold'}}>{departmentName.name + '\n'}</Text>
+          <Text style={{fontWeight: 'bold'}}>{location + '\n'}</Text>
 
-          {aboutJob}
+          {description}
         </List.Subheader>
       </List.Accordion>
     </View>

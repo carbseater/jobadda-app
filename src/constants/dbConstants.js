@@ -4,4 +4,5 @@ export const collection = {
   JOB_OPENING: 'jobOpenings',
   APPLIED_JOBS: 'appliedJobs',
   JOB_APPLICATIONS: 'jobApplications',
+  WORK_EXPERIENCE: 'workExperience',
 };

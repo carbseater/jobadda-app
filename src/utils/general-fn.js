@@ -81,3 +81,14 @@ export const isObjectNullOrEmpty = obj => {
   // Check if the object has no properties (is empty)
   return Object.keys(obj).length === 0;
 };
+
+export const nearestFiveYear = () => {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const startYear = 2023;
+  const interval = 5;
+  const difference = currentYear - startYear;
+  const nearestPastYear =
+    startYear + Math.floor(difference / interval) * interval;
+  return nearestPastYear.toString();
+};

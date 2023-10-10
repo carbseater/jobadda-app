@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {nav} from 'constants/navigation';
 import {UserProfileScreen} from 'screens/app/profile-page/user-profile';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {MyWork} from 'screens/app/my-work/my-work';
+import {AppliedJobList, MyWork} from 'screens/app/my-work/my-work';
 import {JobListingPage} from 'screens/app/listing-page/listing-page';
 import {IconButton, Text, TouchableRipple} from 'react-native-paper';
 import {useAuth} from 'AuthContext';
@@ -12,11 +12,87 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {JobDetail} from 'screens/app/job-details/job-detail';
 import {scale} from 'react-native-size-matters';
+import {ProfileData} from 'screens/app/profile-page/new-profile';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import WorkExperience from 'screens/app/profile-page/work-experience/work-experience';
 
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
+const TopTab = createMaterialTopTabNavigator();
 
+export const ProfileStack = () => {
+  return (
+    <TopTab.Navigator
+      screenOptions={
+        {
+          // tabBarIndicatorStyle: 'pink',
+        }
+      }>
+      <TopTab.Screen
+        name={nav.PROFILE}
+        component={ProfileData}
+        // options={{
+        //     title: t('incomplete'),
+        // }}
+      >
+        {/* {(props) => <LeadBucket {...props} bucketName={[leadStatus.INCOMPLETE]} />} */}
+      </TopTab.Screen>
+
+      <TopTab.Screen
+        name={nav.WORK_EXP}
+        component={WorkExperience}
+        // options={{
+        //     title: 'complete',
+        // }}
+      >
+        {/* {(props) => (
+                <LeadBucket
+                    {...props}
+                    bucketName={[leadStatus.COMPLETED, leadStatus.SYNCED, leadStatus.SYNCING, leadStatus.FAILED]}
+                />
+            )} */}
+      </TopTab.Screen>
+    </TopTab.Navigator>
+  );
+};
+
+export const WorkStack = () => {
+  return (
+    <TopTab.Navigator
+      screenOptions={
+        {
+          // tabBarIndicatorStyle: 'pink',
+        }
+      }>
+      <TopTab.Screen
+        name={nav.APPLIED_JOB}
+        component={AppliedJobList}
+
+        // options={{
+        //     title: t('incomplete'),
+        // }}
+      >
+        {/* {(props) => <LeadBucket {...props} bucketName={[leadStatus.INCOMPLETE]} />} */}
+      </TopTab.Screen>
+
+      <TopTab.Screen
+        name={nav.JOB_INVITE}
+        component={ProfileData}
+        // options={{
+        //     title: 'complete',
+        // }}
+      >
+        {/* {(props) => (
+                <LeadBucket
+                    {...props}
+                    bucketName={[leadStatus.COMPLETED, leadStatus.SYNCED, leadStatus.SYNCING, leadStatus.FAILED]}
+                />
+            )} */}
+      </TopTab.Screen>
+    </TopTab.Navigator>
+  );
+};
 export const JobStack = () => {
   return (
     <Stack.Navigator>
@@ -71,7 +147,7 @@ export const BottomTabStack = () => {
       />
       <BottomTab.Screen
         name="My work"
-        component={MyWork}
+        component={WorkStack}
         options={{
           tabBarIcon: props => (
             <View style={{alignItems: 'center'}}>
@@ -80,6 +156,7 @@ export const BottomTabStack = () => {
             </View>
           ),
           headerShown: false,
+          unmountOnBlur: true,
         }}
       />
       <BottomTab.Screen
@@ -94,7 +171,7 @@ export const BottomTabStack = () => {
           unmountOnBlur: true,
         }}
         name="Profile"
-        component={UserProfileScreen}
+        component={ProfileStack}
       />
     </BottomTab.Navigator>
   );

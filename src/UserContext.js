@@ -27,13 +27,11 @@ export const UserProvider = ({children}) => {
       .collection(collection.EMPLOYEE)
       .doc(uid)
       .collection(collection.APPLIED_JOBS)
-      .onSnapshot(collectionSnapshot => {
-        // console.log('Applied job changed-------------');
-        const jobDocument = {};
-        collectionSnapshot.docs.forEach(
-          doc => (jobDocument[doc.id] = doc.data()),
-        );
-        setAppliedJobs(jobDocument);
+      .doc('appliedJobsArray')
+      .onSnapshot(docSnapshot => {
+        console.log('Snapshot', docSnapshot.data().jobIdArray);
+        const data = docSnapshot.data().jobIdArray;
+        setAppliedJobs(data);
       });
 
     return () => unsubscribe();
