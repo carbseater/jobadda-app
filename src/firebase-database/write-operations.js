@@ -40,20 +40,29 @@ export const applyForJob = async (data, userId, jobId, userProfileData) => {
     .doc(jobId)
     .collection(collection.JOB_APPLICATIONS)
     .doc(userId);
+  console.log('hi');
   const userAppliedJobsRef = db()
     .collection(collection.EMPLOYEE)
     .doc(userId)
     .collection(collection.APPLIED_JOBS)
     .doc(year);
+  console.log('hi1');
   const appliedJobsArray = db()
     .collection(collection.EMPLOYEE)
     .doc(userId)
     .collection(collection.APPLIED_JOBS)
     .doc('appliedJobsArray');
-  // console.log('hello');
+  console.log('hello', typeof jobId, data);
   batch.set(jobApplicationRef, {...userProfileData, status: 'pending'});
+  console.log('hello1');
   batch.set(userAppliedJobsRef, {[jobId]: data}, {merge: true});
-  batch.set(appliedJobsArray, {jobIdArray: db.FieldValue.arrayUnion(jobId)});
+  console.log('hello2');
+  batch.set(
+    appliedJobsArray,
+    {jobIdArray: db.FieldValue.arrayUnion(jobId)},
+    {merge: true},
+  );
+  console.log('hello3');
   batch
     .commit()
     .then(() => {

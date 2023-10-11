@@ -5,4 +5,5 @@ export const collection = {
   APPLIED_JOBS: 'appliedJobs',
   JOB_APPLICATIONS: 'jobApplications',
   WORK_EXPERIENCE: 'workExperience',
+  JOB_INVITES: 'jobInvites',
 };

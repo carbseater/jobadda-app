@@ -1,15 +1,39 @@
-import {View, StyleSheet, FlatList} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {collection} from 'constants/dbConstants';
 import {useAuth} from 'AuthContext';
-import {getRelativeDate, nearestFiveYear} from 'utils/general-fn';
-import {Button, Surface, Text} from 'react-native-paper';
+import {
+  formatIndianCurrency,
+  getRelativeDate,
+  nearestFiveYear,
+} from 'utils/general-fn';
+import {
+  ActivityIndicator,
+  Button,
+  Surface,
+  Text,
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper';
 import {padding} from 'styleConfig/padding';
 import {margin} from 'styleConfig/margin';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import {useNavigation} from '@react-navigation/native';
+import {nav} from 'constants/navigation';
+import {CircularLoader} from 'components/CircularLoader';
+import {lightColors} from 'core/theme';
+import EmptyBox from 'components/EmptyBox';
 
-const AppliedJobCard = ({data}) => {
+const AppliedJobCard = ({data, jobId}) => {
+  const navigation = useNavigation();
+  const {colors} = useTheme();
   return (
     <Surface mode="flat" style={styles.body}>
       <View style={styles.row}>
@@ -18,11 +42,22 @@ const AppliedJobCard = ({data}) => {
           <Text>{data.jobTitle}</Text>
         </View>
 
-        <Button style={styles.button} mode="contained">
-          Call HR
-        </Button>
+        <TouchableRipple
+          borderless={true}
+          onPress={() =>
+            navigation.navigate(nav.JOB_DETAILS, {callFromDb: true, id: jobId})
+          }>
+          <MaterialIcon
+            name={'arrow-forward-ios'}
+            size={15}
+            color={colors.primary}
+            style={{padding: padding.small}}
+          />
+        </TouchableRipple>
       </View>
-
+      <Text style={{color: colors.primary, fontSize: 18}}>
+        ₹{formatIndianCurrency(20000)} - ₹{formatIndianCurrency(50000)}
+      </Text>
       <View style={styles.footer}>
         <Surface mode={'flat'} style={styles.chip}>
           <Text style={{fontSize: 13, color: '#454A64'}}>
@@ -59,23 +94,17 @@ export const AppliedJobList = () => {
     fetchAppliedJobs();
   }, []);
 
+  if (isLoading) return <CircularLoader />;
   return (
     <View style={styles.container}>
       <FlatList
+        showsVerticalScrollIndicator={false}
         data={jobListData}
         renderItem={({item}) => {
-          // console.log(item.companyName);
-          return <AppliedJobCard data={item[1]} />;
+          return <AppliedJobCard data={item[1]} jobId={item[0]} />;
         }}
         keyExtractor={item => item[0]}
-        ListEmptyComponent={
-          <View>
-            <Text>It looks empty here !</Text>
-            <Text>
-              Add your work experience to increase your hiring chances
-            </Text>
-          </View>
-        }
+        ListEmptyComponent={<EmptyBox message={'Apply for jobs'} />}
       />
     </View>
   );
@@ -88,6 +117,7 @@ const styles = StyleSheet.create({
   body: {
     borderRadius: 3,
     // borderWidth: 0.3,
+    gap: 3,
     padding: padding.small,
     marginTop: margin.large,
   },
@@ -116,7 +146,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     gap: 3,
     justifyContent: 'center',
-    backgroundColor: '#e6eaea',
+    backgroundColor: lightColors.elevation.level4,
     borderRadius: 5,
   },
 });

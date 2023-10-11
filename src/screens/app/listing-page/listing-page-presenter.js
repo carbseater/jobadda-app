@@ -22,6 +22,7 @@ import {FilterModal} from 'screens/app/listing-page/filter-modal';
 import {SelectedFilterRow} from 'screens/app/listing-page/filters';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {margin} from '../../../styleConfig/margin';
+import EmptyBox from 'components/EmptyBox';
 
 export const ListingPagePresenter = ({
   handleScroll,
@@ -33,7 +34,9 @@ export const ListingPagePresenter = ({
   setFilters,
   userData,
   refreshing,
-  onRefresh,setLastJobDocument,setIsFilterEdited
+  onRefresh,
+  setLastJobDocument,
+  setIsFilterEdited,
 }) => {
   const {colors} = useTheme();
   const [filterVisible, setFilterVisible] = useState(false);
@@ -94,7 +97,11 @@ export const ListingPagePresenter = ({
           setIsFilterEdited={setIsFilterEdited}
         />
 
-        <SelectedFilterRow filters={filters} setFilters={setFilters} setIsFilterEdited={setIsFilterEdited} />
+        <SelectedFilterRow
+          filters={filters}
+          setFilters={setFilters}
+          setIsFilterEdited={setIsFilterEdited}
+        />
       </Surface>
 
       <View style={{paddingHorizontal: padding.small, flex: 1}}>
@@ -112,10 +119,11 @@ export const ListingPagePresenter = ({
           }}
           onScroll={handleScroll}
           ListFooterComponent={
-            <Button style={{height: 80}} onPress={()=>loadData(false)}>
+            <Button style={{height: 80}} onPress={() => loadData(false)}>
               Load more
             </Button>
           }
+          ListEmptyComponent={<EmptyBox message={'No jobs found'} />}
         />
         {isLoading && (
           <ActivityIndicator color={colors.primary} size={'large'} />

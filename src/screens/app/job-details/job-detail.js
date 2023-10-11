@@ -11,32 +11,36 @@ import React, {useState} from 'react';
 import {
   Button,
   Divider,
-  IconButton,
-  Paragraph,
   Surface,
   Text,
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
 import {useEffect} from 'react';
-import {padding} from '../../../styleConfig/padding';
+import {padding} from 'styleConfig/padding';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {formatIndianCurrency, truncateString} from 'utils/general-fn';
-import db from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import {image} from 'constants/image';
 import {scale} from 'react-native-size-matters';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import {applyForJob} from '../../../firebase-database/write-operations';
-import {useAuth} from '../../../AuthContext';
-import {useUserData} from '../../../UserContext';
+import {applyForJob} from 'firebase-database/write-operations';
+import {useAuth} from 'AuthContext';
+import {useUserData} from 'UserContext';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {margin} from '../../../styleConfig/margin';
+import {collection} from 'constants/dbConstants';
+import {useNavigation} from '@react-navigation/native';
+import {CircularLoader} from 'components/CircularLoader';
 
 export const JobDetail = ({navigation, route}) => {
-  // console.log(route.params);
   const {userData} = useUserData();
   const {colors} = useTheme();
+  const [jobDetail, setJobDetail] = useState();
   const [jobDescrptionVisible, setJobDescrptionVisible] = useState(false);
+  const navigate = useNavigation();
+  const [isLoading, setIsloading] = useState(true);
+  const {id, callFromDb = false} = route.params;
+  // console.log('JOBDIIIID', id);
   const {
     aboutCompany,
     companyAddress,
@@ -53,18 +57,15 @@ export const JobDetail = ({navigation, route}) => {
     minimumSalary,
     overtimeAmount,
     workBenefits,
-    id,
-  } = route.params;
+  } = jobDetail ?? {};
   const totalEarning =
     parseInt(maximumSalary || 0, 10) + parseInt(overtimeAmount || 0, 10);
-  // console.log('ID', id);
-  console.log('User data------', userData);
   const {
     currentUser: {uid},
   } = useAuth();
   const {appliedJobs} = useUserData();
-  console.log('AppliedJob', appliedJobs.includes(id));
   const isAppliedAlready = appliedJobs.includes(id);
+  console.log(appliedJobs);
   const handlePhoneCall = () => {
     if (!employerMobileNo) {
       ToastAndroid.show('No contact found', ToastAndroid.SHORT);
@@ -84,13 +85,28 @@ export const JobDetail = ({navigation, route}) => {
         ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
       });
   };
-  console.log('-------', id, appliedJobs);
+
+  const fetchJobDetail = async jobId => {
+    const response = await firestore()
+      .doc(`${collection.JOB_OPENING}/${jobId}`)
+      .get();
+    if (response.exists) {
+      setJobDetail(response.data());
+    }
+    setIsloading(false);
+  };
   useEffect(() => {
     navigation.getParent().setOptions({
       tabBarStyle: {
         display: 'none',
       },
     });
+
+    if (callFromDb) fetchJobDetail(id);
+    else {
+      setJobDetail(route.params);
+      setIsloading(false);
+    }
 
     return () => {
       navigation.getParent().setOptions({
@@ -108,23 +124,23 @@ export const JobDetail = ({navigation, route}) => {
       status: 'In review',
       companyName,
       jobTitle,
-      appliedOn: db.FieldValue.serverTimestamp(),
+      appliedOn: firestore.FieldValue.serverTimestamp(),
       message: 'Your application is under review',
       contactNo: employerMobileNo,
     };
-    console.log('payload', payload);
+    console.log('payload', payload, uid, id);
     try {
       await applyForJob(payload, uid, id, userData);
-      // addNewJobToState(payload);
     } catch (e) {
       console.log('Error while applying', e);
     }
   };
+  if (isLoading) return <CircularLoader />;
   return (
     <View style={styles.container}>
       <View style={{padding: 8}}>
         <TouchableRipple
-          onPress={() => navigation.pop()}
+          onPress={() => navigate.goBack()}
           style={{
             padding: 5,
             borderRadius: 50,

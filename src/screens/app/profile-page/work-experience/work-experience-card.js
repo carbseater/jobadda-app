@@ -1,8 +1,8 @@
-import {View, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React, {useState} from 'react';
-import {List, Text} from 'react-native-paper';
-import {margin} from 'styleConfig/margin';
+import {List, Surface, Text, useTheme} from 'react-native-paper';
 import {extendedFunctions} from 'utils/eval';
+import {lightColors} from 'core/theme';
 
 export const WorkExperienceCard = ({work}) => {
   const {
@@ -18,40 +18,38 @@ export const WorkExperienceCard = ({work}) => {
     location,
   } = work ?? {};
   const [isExpanded, setIsExpanded] = useState(false);
+  const {colors} = useTheme();
   const tenure = extendedFunctions.getDateDiff(start_date, end_date);
 
   return (
-    <View style={styles.container}>
+    <Surface mode="flat" style={styles.container}>
       <List.Accordion
         left={props => <List.Icon {...props} icon="domain" />}
         title={employer}
         titleStyle={{fontWeight: 'bold'}}
-        style={{
-          borderWidth: 0.5,
-          borderBottomWidth: isExpanded ? 0 : 0.5,
-        }}
+        style={styles.accordion}
         expanded={isExpanded}
         onPress={() => setIsExpanded(!isExpanded)}
         description={job_title + ' - ' + tenure.trim()}>
-        <List.Subheader
-          style={{borderWidth: 0.5, borderTopWidth: 0}}
-          numberOfLines={8}>
+        <List.Subheader numberOfLines={8}>
           <Text style={{fontWeight: 'bold'}}>{location + '\n'}</Text>
-
           {description}
         </List.Subheader>
       </List.Accordion>
-    </View>
+    </Surface>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: margin.medium,
+    borderRadius: 3,
   },
   head: {
     alignItems: 'flex-start',
-    borderWidth: 1,
     flexDirection: 'row',
+  },
+  accordion: {
+    backgroundColor: lightColors.elevation.level1,
+    borderRadius: 3,
   },
 });

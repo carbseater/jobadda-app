@@ -10,4 +10,5 @@ export const nav = {
   WORK_EXP: 'Work experience',
   APPLIED_JOB: 'Applied jobs',
   JOB_INVITE: 'Job invites',
+  EDIT_PROFILE: 'Edit profile',
 };

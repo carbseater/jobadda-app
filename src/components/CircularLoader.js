@@ -8,11 +8,11 @@ import {windowWidth} from 'utils/dimension';
 export const CircularLoader = () => {
   const {colors} = useTheme();
   return (
-    <Modal animationType="fade" transparent={true} visible={true}>
-      <View style={styles.centeredView}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    </Modal>
+    // <Modal animationType="fade" transparent={true} visible={true}>
+    <View style={styles.centeredView}>
+      <ActivityIndicator size="large" color={colors.primary} />
+    </View>
+    // </Modal>
   );
 };
 
@@ -44,7 +44,7 @@ export function ErrorPage({error}) {
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    backgroundColor: '#000000AA',
+    // backgroundColor: '#000000AA',
     justifyContent: 'center',
     alignItems: 'center',
   },

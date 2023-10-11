@@ -1,95 +1,59 @@
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {nav} from 'constants/navigation';
-import {UserProfileScreen} from 'screens/app/profile-page/user-profile';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {AppliedJobList, MyWork} from 'screens/app/my-work/my-work';
+import {AppliedJobList} from 'screens/app/my-work/AppliedList';
 import {JobListingPage} from 'screens/app/listing-page/listing-page';
-import {IconButton, Text, TouchableRipple} from 'react-native-paper';
+import {IconButton, Text, useTheme} from 'react-native-paper';
 import {useAuth} from 'AuthContext';
 import {View} from 'react-native';
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {JobDetail} from 'screens/app/job-details/job-detail';
 import {scale} from 'react-native-size-matters';
-import {ProfileData} from 'screens/app/profile-page/new-profile';
+import {ProfileData} from 'screens/app/profile-page/user-profile/new-profile';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import WorkExperience from 'screens/app/profile-page/work-experience/work-experience';
+import {JobInvites} from 'screens/app/my-work/JobInvites';
+import {EditProfile} from 'screens/app/profile-page/user-profile/edit-profile';
 
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 const TopTab = createMaterialTopTabNavigator();
 
-export const ProfileStack = () => {
+const TopTabStack = () => {
+  const {colors} = useTheme();
   return (
     <TopTab.Navigator
-      screenOptions={
-        {
-          // tabBarIndicatorStyle: 'pink',
-        }
-      }>
-      <TopTab.Screen
-        name={nav.PROFILE}
-        component={ProfileData}
-        // options={{
-        //     title: t('incomplete'),
-        // }}
-      >
-        {/* {(props) => <LeadBucket {...props} bucketName={[leadStatus.INCOMPLETE]} />} */}
-      </TopTab.Screen>
-
-      <TopTab.Screen
-        name={nav.WORK_EXP}
-        component={WorkExperience}
-        // options={{
-        //     title: 'complete',
-        // }}
-      >
-        {/* {(props) => (
-                <LeadBucket
-                    {...props}
-                    bucketName={[leadStatus.COMPLETED, leadStatus.SYNCED, leadStatus.SYNCING, leadStatus.FAILED]}
-                />
-            )} */}
-      </TopTab.Screen>
+      screenOptions={{
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: 'grey',
+      }}>
+      <TopTab.Screen name={nav.PROFILE} component={ProfileData} />
+      <TopTab.Screen name={nav.WORK_EXP} component={WorkExperience} />
     </TopTab.Navigator>
+  );
+};
+export const ProfileStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen component={TopTabStack} name={'sskd'} />
+      <Stack.Screen component={EditProfile} name={nav.EDIT_PROFILE} />
+    </Stack.Navigator>
   );
 };
 
 export const WorkStack = () => {
+  const {colors} = useTheme();
   return (
     <TopTab.Navigator
-      screenOptions={
-        {
-          // tabBarIndicatorStyle: 'pink',
-        }
-      }>
-      <TopTab.Screen
-        name={nav.APPLIED_JOB}
-        component={AppliedJobList}
-
-        // options={{
-        //     title: t('incomplete'),
-        // }}
-      >
-        {/* {(props) => <LeadBucket {...props} bucketName={[leadStatus.INCOMPLETE]} />} */}
-      </TopTab.Screen>
-
-      <TopTab.Screen
-        name={nav.JOB_INVITE}
-        component={ProfileData}
-        // options={{
-        //     title: 'complete',
-        // }}
-      >
-        {/* {(props) => (
-                <LeadBucket
-                    {...props}
-                    bucketName={[leadStatus.COMPLETED, leadStatus.SYNCED, leadStatus.SYNCING, leadStatus.FAILED]}
-                />
-            )} */}
-      </TopTab.Screen>
+      screenOptions={{
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: 'grey',
+      }}>
+      <TopTab.Screen name={nav.APPLIED_JOB} component={AppliedJobList} />
+      <TopTab.Screen name={nav.JOB_INVITE} component={JobInvites} />
     </TopTab.Navigator>
   );
 };
@@ -111,7 +75,7 @@ export const JobStack = () => {
           headerShown: false,
           title: '',
           headerStyle: {
-            backgroundColor: 'white', // Set your desired background color here
+            backgroundColor: 'white',
           },
         }}
       />

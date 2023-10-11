@@ -1,6 +1,6 @@
 import {FlatList, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {Button, Text} from 'react-native-paper';
+import {Button, Divider, Text} from 'react-native-paper';
 import {WorkExperienceForm} from './work-experience-form';
 import db from '@react-native-firebase/firestore';
 import {collection} from 'constants/dbConstants';
@@ -8,6 +8,8 @@ import {nearestFiveYear} from 'utils/general-fn';
 import {WorkExperienceCard} from './work-experience-card';
 import {useAuth} from 'AuthContext';
 import {padding} from 'styleConfig/padding';
+import {CircularLoader} from 'components/CircularLoader';
+import EmptyBox from 'components/EmptyBox';
 const WorkExperience = () => {
   const [isLoading, setIsloading] = useState(true);
   const [workExperienceFormVisible, setWorkExperienceFormVisible] =
@@ -15,12 +17,9 @@ const WorkExperience = () => {
   const [workExperience, setWorkExperience] = useState(null);
   const {
     currentUser: {uid},
-    logout,
   } = useAuth();
-  console.log('UID', uid);
   useEffect(() => {
     const year = nearestFiveYear();
-    // console.log(year);
     const fetch = async () => {
       const data = await db()
         .doc(
@@ -28,17 +27,15 @@ const WorkExperience = () => {
         )
         .get();
       setWorkExperience(data.data().data);
-      // console.log('Data', data.data());
+      setIsloading(false);
     };
     fetch();
-
-    // return () => unsubscribe();
   }, []);
+  if (isLoading) return <CircularLoader />;
   return (
     <View>
       <View style={styles.container}>
         <Button
-          mode="contained"
           icon="plus"
           compact
           onPress={() => setWorkExperienceFormVisible(true)}
@@ -51,19 +48,22 @@ const WorkExperience = () => {
           dismiss={() => setWorkExperienceFormVisible(false)}
         />
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={workExperience}
           renderItem={({item}) => {
-            // console.log(item.companyName);
             return <WorkExperienceCard work={item} />;
           }}
-          ListEmptyComponent={
-            <View>
-              <Text>It looks empty here !</Text>
-              <Text>
-                Add your work experience to increase your hiring chances
-              </Text>
-            </View>
+          ItemSeparatorComponent={
+            <View
+              style={{
+                height: 30,
+                borderLeftWidth: 2,
+                borderStyle: 'dashed',
+                marginLeft: 15,
+              }}
+            />
           }
+          ListEmptyComponent={<EmptyBox />}
         />
       </View>
     </View>
@@ -75,5 +75,9 @@ export default WorkExperience;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: padding.smallMd,
+    borderRadius: 3,
+  },
+  actionButton: {
+    alignSelf: 'flex-end',
   },
 });
