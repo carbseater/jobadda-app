@@ -10,7 +10,7 @@ import {useUserData} from '../../../UserContext';
 export const JobListingPage = ({navigation}) => {
   // const filterOptions = {...jobFilters};
   const [refreshing, setRefreshing] = useState(false);
-  const [isFilterEdited,setIsFilterEdited] = useState(false);
+  const [isFilterEdited, setIsFilterEdited] = useState(false);
   const {userData} = useUserData();
   const [filters, setFilters] = useState(jobFilters);
   const [listOfJobs, setListOfJobs] = useState([]);
@@ -42,43 +42,41 @@ export const JobListingPage = ({navigation}) => {
     offsetRef.current = currentOffset;
   };
 
-  const getFilterQuery = ()=>{
+  const getFilterQuery = () => {
     let jobOpenings = db().collection('jobOpenings');
 
-    let query = jobOpenings ;
-      Object.entries(filters).map(([key,val])=>{
-        const {dbPath,value, operator,selected}  = val;
-        // console.log("hii",dbPath,operator,value,selected, typeof value,key);
+    let query = jobOpenings;
+    Object.entries(filters).map(([key, val]) => {
+      const {dbPath, value, operator, selected} = val;
+      // console.log("hii",dbPath,operator,value,selected, typeof value,key);
 
-        if(selected &&  key!='sortBy' && value) {
-          if( (typeof value === 'object' && value.length==0)){
-            return
-          }
-          query = query.where(dbPath, operator, value);
-          if(dbPath === 'minimumSalary'){
-            query = query.orderBy('minimumSalary','asc')
-          }
+      if (selected && key != 'sortBy' && value) {
+        if (typeof value === 'object' && value.length == 0) {
+          return;
         }
-        else if(key==='sortBy' && selected ){
-          const sort = value === 'highToLow' ? 'desc':'asc';
-          console.log(sort);
-          query = query.orderBy('minimumSalary',sort);
+        query = query.where(dbPath, operator, value);
+        if (dbPath === 'minimumSalary') {
+          query = query.orderBy('minimumSalary', 'asc');
         }
+      } else if (key === 'sortBy' && selected) {
+        const sort = value === 'highToLow' ? 'desc' : 'asc';
+        console.log(sort);
+        query = query.orderBy('minimumSalary', sort);
+      }
 
-        // console.log("hii",dbPath,operator,value,selected, typeof value);
-
-      })
+      // console.log("hii",dbPath,operator,value,selected, typeof value);
+    });
 
     return query;
-  }
-  async function LoadData(applyFilter=false) { // using apply filter to avoid suing last document
+  };
+  async function LoadData(applyFilter = false) {
+    // using apply filter to avoid suing last document
     // console.log('Last job',filters);
     setIsLoading(true);
     try {
+      let query = getFilterQuery();
 
-      let query = getFilterQuery()
-
-       // .where('jobDepartment', "==", 'engineering')
+      // .where('jobDepartment', "==", 'engineering')
       // sort the data
       // console.log('I am lastJobDoc',lastJobDocument)
       if (!applyFilter && lastJobDocument !== undefined) {
@@ -91,11 +89,11 @@ export const JobListingPage = ({navigation}) => {
         .get()
         .then(querySnapshot => {
           const size = querySnapshot.size;
-          console.log("jobsss size ",querySnapshot.size)
+          console.log('jobsss size ', querySnapshot.size);
           if (size === 0) {
             ToastAndroid.show('No more jobs founded', ToastAndroid.SHORT);
-            if(applyFilter){
-              setListOfJobs([])
+            if (applyFilter) {
+              setListOfJobs([]);
             }
             return;
           }
@@ -106,15 +104,12 @@ export const JobListingPage = ({navigation}) => {
             ...job.data(),
             id: job.id,
           }));
-          console.log("Hee",applyFilter);
+          console.log('Hee', applyFilter);
 
-          if(!applyFilter) {
+          if (!applyFilter) {
             setListOfJobs([...listOfJobs, ...jobs]);
-          }
-          else
-            setListOfJobs([...jobs])
+          } else setListOfJobs([...jobs]);
           // console.log("jobsss",jobs)
-
         });
     } catch (e) {
       console.error(e);
@@ -130,9 +125,9 @@ export const JobListingPage = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    if(isFilterEdited){
+    if (isFilterEdited) {
       setIsFilterEdited(false);
-      console.log("hii isFiltered")
+      console.log('hii isFiltered');
       LoadData(true);
     }
   }, [isFilterEdited]);
@@ -151,6 +146,7 @@ export const JobListingPage = ({navigation}) => {
     }
     setRefreshing(false);
   };
+
   return (
     <ListingPagePresenter
       filters={filters}

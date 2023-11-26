@@ -1,6 +1,6 @@
 import {FlatList, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {Button, Divider, Text} from 'react-native-paper';
+import {Button} from 'react-native-paper';
 import {WorkExperienceForm} from './work-experience-form';
 import db from '@react-native-firebase/firestore';
 import {collection} from 'constants/dbConstants';
@@ -53,16 +53,7 @@ const WorkExperience = () => {
           renderItem={({item}) => {
             return <WorkExperienceCard work={item} />;
           }}
-          ItemSeparatorComponent={
-            <View
-              style={{
-                height: 30,
-                borderLeftWidth: 2,
-                borderStyle: 'dashed',
-                marginLeft: 15,
-              }}
-            />
-          }
+          ItemSeparatorComponent={<View style={styles.dashedLine} />}
           ListEmptyComponent={<EmptyBox />}
         />
       </View>
@@ -79,5 +70,11 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     alignSelf: 'flex-end',
+  },
+  dashedLine: {
+    height: 30,
+    borderLeftWidth: 2,
+    borderStyle: 'dashed',
+    marginLeft: 15,
   },
 });

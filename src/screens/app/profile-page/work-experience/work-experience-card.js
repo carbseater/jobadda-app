@@ -1,24 +1,13 @@
 import {StyleSheet} from 'react-native';
 import React, {useState} from 'react';
-import {List, Surface, Text, useTheme} from 'react-native-paper';
+import {List, Surface, Text} from 'react-native-paper';
 import {extendedFunctions} from 'utils/eval';
 import {lightColors} from 'core/theme';
 
 export const WorkExperienceCard = ({work}) => {
-  const {
-    companyName,
-    departmentName,
-    job_title,
-    employer,
-    verifiedByJobAdda,
-    start_date,
-    end_date,
-    aboutJob,
-    description,
-    location,
-  } = work ?? {};
+  const {job_title, employer, start_date, end_date, description, location} =
+    work ?? {};
   const [isExpanded, setIsExpanded] = useState(false);
-  const {colors} = useTheme();
   const tenure = extendedFunctions.getDateDiff(start_date, end_date);
 
   return (

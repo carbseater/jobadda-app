@@ -1,3 +1,5 @@
+import messaging from '@react-native-firebase/messaging';
+
 function formatNumberWithCommas(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
@@ -91,4 +93,14 @@ export const nearestFiveYear = () => {
   const nearestPastYear =
     startYear + Math.floor(difference / interval) * interval;
   return nearestPastYear.toString();
+};
+
+export const validateMobileNo = mobileNo => {
+  const indianMobileNumberPattern = /^[7896]\d{9}$/;
+  return indianMobileNumberPattern.test(mobileNo);
+};
+
+export const getDeviceToken = async () => {
+  await messaging().deleteToken();
+  return await messaging().getToken();
 };

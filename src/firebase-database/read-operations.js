@@ -14,12 +14,14 @@ export const addWorkExperience = async (data, userId) => {
 };
 
 export const getUserData = async userId => {
-  const user = await db().collection(collection.EMPLOYEE).doc(userId).get();
-  // const snapshot = await database().ref(`workers/${userId}`).once('value');
-  if (user.exists) {
-    console.log(user.data());
-    return user.data();
+  console.log('UID----', userId);
+  const response = await db().collection(collection.EMPLOYEE).doc(userId).get();
+  if (response.exists) {
+    const userData = response.data();
+    console.log('Saved data', userData);
+    return userData;
   } else {
+    console.log('Found nothing');
     return null;
   }
 };

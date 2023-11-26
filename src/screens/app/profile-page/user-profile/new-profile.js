@@ -15,81 +15,208 @@ import {margin} from 'styleConfig/margin';
 import {useAuth} from 'AuthContext';
 import {useNavigation} from '@react-navigation/native';
 import {nav} from 'constants/navigation';
+import {
+  accountType as accountTypeOptions,
+  genderOptions,
+  maritialOptions,
+  stateOptions,
+} from 'constants/dropdown-options';
 
 export function ProfileData() {
   const {
-    userData: {firstName, lastName, email},
+    userData: {
+      firstName,
+      lastName,
+      email,
+      gender,
+      state,
+      district,
+      maritialStatus,
+      dateOfBirth,
+      contactNo,
+      address,
+      insuranceNo,
+      fatherName,
+      bankName,
+      accountNumber,
+      ifscCode,
+      accountType,
+      aadharNo,
+      uanNO,
+      pfNo,
+    },
   } = useUserData();
   const {logout} = useAuth();
   const avatarLabel = (firstName[0] || '') + (lastName[0] || '');
+
   const basicDetail = [
     {
       label: 'First Name',
-      value: 'Abhinav',
+      value: firstName,
       id: 'firstName',
       type: 'text',
+      minLength: 3,
+      maxLength: 50,
     },
     {
       label: 'Last Name',
-      value: 'Sahai',
+      value: lastName,
       id: 'lastName',
       type: 'text',
+      minLength: 3,
+      maxLength: 50,
     },
     {
       label: 'Gender',
-      value: 'Male',
+      value: gender,
       id: 'gender',
       type: 'radio',
+      options: genderOptions,
+    },
+    {
+      label: 'Maritial status',
+      value: maritialStatus,
+      id: 'maritialStatus',
+      type: 'dropdown',
+      options: maritialOptions,
     },
     {
       label: 'Date of birth',
-      value: '27 Oct 2001',
+      value: dateOfBirth,
       id: 'dateOfBirth',
-      type: 'date',
+      type: 'datePicker',
     },
     {
       label: 'Email',
-      value: 'abhi@gmail.com',
+      value: email,
       id: 'email',
       type: 'text',
+      disabled: true,
     },
     {
       label: 'Mobile no',
-      value: '+918448774634',
+      value: contactNo,
       id: 'contactNo',
       type: 'text',
+      keyboardType: 'numeric',
+      minLength: 10,
+      maxLength: 10,
+      regex: /^\d{10}$/,
     },
+    // {
+    //   label: 'State',
+    //   value: state,
+    //   id: 'state',
+    //   type: 'dropdown',
+    //   options: stateOptions,
+    // },
+    // {
+    //   label: 'District',
+    //   value: district,
+    //   id: 'district',
+    //   type: 'dropdown',
+    //   options: districtOptions,
+    // },
     {
       label: 'Address',
-      value: 'Noida, Uttar pradesh',
+      value: address,
       id: 'address',
       type: 'text',
+      minLength: 5,
+      maxLength: 150,
     },
   ];
   const insuranceDetail = [
-    {label: 'Insurance No', value: '6545676789'},
-    {label: 'Father name', value: 'Dilip kumar singh'},
-    {label: 'Account no', value: '3923423043'},
-    {label: 'IFSC code', value: 'SBIN00520'},
-    {label: 'Account type', value: 'Savings'},
-    {label: 'Account no', value: '3923423043'},
-    {label: 'Aadhar no', value: '254537941481'},
+    {
+      label: 'Insurance No',
+      value: insuranceNo,
+      type: 'text',
+      keyboardType: 'numeric',
+      minLength: 10,
+      maxLength: 10,
+      id: 'insuranceNo',
+      regex: /^\d{10}$/,
+    },
+    {
+      label: 'Father name',
+      value: fatherName,
+      type: 'text',
+      id: 'fatherName',
+      minLength: 3,
+      maxLength: 50,
+    },
+    {
+      label: 'Bank name',
+      value: bankName,
+      type: 'text',
+      id: 'bankName',
+      minLength: 5,
+      maxLength: 50,
+    },
+    {
+      label: 'Account no',
+      value: accountNumber,
+      type: 'text',
+      keyboardType: 'numeric',
+      minLength: 9,
+      maxLength: 18,
+      id: 'accountNumber',
+      regex: /^[0-9]+$/,
+    },
+    {
+      label: 'IFSC code',
+      value: ifscCode,
+      type: 'text',
+      id: 'ifscCode',
+      minLength: 11,
+      maxLength: 11,
+      regex: /^[A-Z]{4}0[A-Z0-9]{6}$/,
+    },
+    {
+      label: 'Account type',
+      value: accountType,
+      type: 'dropdown',
+      options: accountTypeOptions,
+      id: 'accountType',
+    },
+    {
+      label: 'Aadhar no',
+      value: aadharNo,
+      type: 'text',
+      keyboardType: 'numeric',
+      minLength: 12,
+      maxLength: 12,
+      id: 'aadharNo',
+      regex: /^\d{12}$/,
+    },
   ];
 
   const providentDetail = [
     {
       label: 'UAN no',
-      value: '3425324234234234',
+      value: uanNO,
+      id: 'uanNO',
+      type: 'text',
+      keyboardType: 'numeric',
+      minLength: 12,
+      maxLength: 12,
+      regex: /^\d{12}$/,
     },
     {
       label: 'PF no',
-      value: '432234234',
+      value: pfNo,
+      id: 'pfNo',
+      type: 'text',
+      keyboardType: 'numeric',
+      minLength: 10,
+      maxLength: 10,
+      regex: /^\d{10}$/,
     },
   ];
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Button
-        style={{alignSelf: 'flex-end', borderRadius: 5}}
+        style={styles.logout}
         onPress={logout}
         mode="contained-tonal"
         icon={'logout'}>
@@ -98,19 +225,29 @@ export function ProfileData() {
 
       <View style={styles.avatar}>
         <Avatar.Text size={70} label={avatarLabel.toUpperCase()} />
-        <Text style={{fontSize: 25, fontWeight: 'bold'}}>
-          {firstName + ' ' + lastName}
-        </Text>
+        <Text style={styles.fullName}>{firstName + ' ' + lastName}</Text>
         <Text>{email}</Text>
       </View>
-      <ProfileCard cardName={'Basic detail'} fields={basicDetail} />
-      <ProfileCard cardName="Insurance detail" fields={insuranceDetail} />
-      <ProfileCard cardName="PF detail" fields={providentDetail} />
+      <ProfileCard
+        cardName={'Basic detail'}
+        fields={basicDetail}
+        pageName={'Basic details'}
+      />
+      <ProfileCard
+        cardName="Insurance detail"
+        fields={insuranceDetail}
+        pageName="Insurance detail"
+      />
+      <ProfileCard
+        cardName="PF detail"
+        fields={providentDetail}
+        pageName="PF detail"
+      />
     </ScrollView>
   );
 }
 
-export const ProfileCard = ({cardName, fields}) => {
+export const ProfileCard = ({cardName, fields, pageName}) => {
   const {colors} = useTheme();
   const navigation = useNavigation();
   return (
@@ -120,7 +257,9 @@ export const ProfileCard = ({cardName, fields}) => {
           {cardName}
         </Text>
         <MaterialIcon
-          onPress={() => navigation.navigate(nav.EDIT_PROFILE, {fields})}
+          onPress={() =>
+            navigation.navigate(nav.EDIT_PROFILE, {fields, pageName})
+          }
           size={20}
           color={colors.primary}
           name="edit"
@@ -144,14 +283,11 @@ const styles = StyleSheet.create({
   container: {
     padding: padding.smallMd,
   },
-
   avatar: {
     minHeight: 50,
-    // borderWidth: 1,
     alignItems: 'center',
     padding: padding.large,
   },
-
   cardBody: {
     gap: 5,
     padding: padding.small,
@@ -161,6 +297,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // borderWidth: 1,
   },
+  logout: {alignSelf: 'flex-end', borderRadius: 5},
+  fullName: {fontSize: 25, fontWeight: 'bold'},
 });

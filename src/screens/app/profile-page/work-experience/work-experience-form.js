@@ -5,7 +5,6 @@ import Dropdown from 'components/Dropdown';
 import {departments} from 'constants/dropdown-options';
 import {addWorkExperience} from 'firebase-database/write-operations';
 import {useState} from 'react';
-
 import {useForm, Controller} from 'react-hook-form';
 import {Modal, StyleSheet, View} from 'react-native';
 import {
@@ -37,16 +36,14 @@ export const WorkExperienceForm = ({visible, dismiss, defaultValues}) => {
   const {
     currentUser: {uid},
   } = useAuth();
-  // console.log('UserId', uid);
+
   const onSubmit = async data => {
-    // console.log(data);
     try {
       await addWorkExperience(data, uid);
     } catch (err) {
       setIsError(err.toString());
     }
   };
-  // console.log(errors);
   return (
     <Modal visible={visible} onRequestClose={dismiss}>
       {isLoading && <CircularLoader />}

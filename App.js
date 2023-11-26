@@ -1,10 +1,11 @@
 import React from 'react';
 import Provider from './src/navigation/provider';
-import Config from 'react-native-config';
+
 import {LogBox} from 'react-native';
+import {getFcmToken} from 'firebase-database/firebase-messaging';
 
 const App = () => {
-  console.log(Config.REACT_APP_FIREBASE_API_KEY);
+  getFcmToken();
   LogBox.ignoreAllLogs();
   return <Provider />;
 };

@@ -14,14 +14,14 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
-import {padding} from '../../../styleConfig/padding';
+import {padding} from 'styleConfig/padding';
 import {JobCard} from 'screens/app/listing-page/job-card';
 import React, {useState} from 'react';
 import {scale} from 'react-native-size-matters';
 import {FilterModal} from 'screens/app/listing-page/filter-modal';
 import {SelectedFilterRow} from 'screens/app/listing-page/filters';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {margin} from '../../../styleConfig/margin';
+import {margin} from 'styleConfig/margin';
 import EmptyBox from 'components/EmptyBox';
 
 export const ListingPagePresenter = ({
@@ -49,7 +49,7 @@ export const ListingPagePresenter = ({
         barStyle={'dark-content'}
       />
       <Surface style={{paddingHorizontal: padding.small}}>
-        <View
+        {/* <View
           style={{
             color: 'black',
             flexDirection: 'row',
@@ -70,10 +70,10 @@ export const ListingPagePresenter = ({
             color={'black'}
             size={25}
           />
-        </View>
+        </View> */}
         <Searchbar
           mode={'bar'}
-          placeholder="Find jobs"
+          placeholder="Search company"
           style={styles.searchBar}
           traileringIcon={prop => (
             <TouchableRipple

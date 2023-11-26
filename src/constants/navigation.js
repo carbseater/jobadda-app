@@ -11,4 +11,5 @@ export const nav = {
   APPLIED_JOB: 'Applied jobs',
   JOB_INVITE: 'Job invites',
   EDIT_PROFILE: 'Edit profile',
+  SKILLS_PAGE: 'Skills',
 };

@@ -29,16 +29,26 @@ export const UserProvider = ({children}) => {
       .collection(collection.APPLIED_JOBS)
       .doc('appliedJobsArray')
       .onSnapshot(docSnapshot => {
-        console.log('Snapshot', docSnapshot.data().jobIdArray);
-        const data = docSnapshot.data().jobIdArray;
-        setAppliedJobs(data);
+        if (docSnapshot.exists) {
+          console.log('Snapshot', docSnapshot.data().jobIdArray);
+          const data = docSnapshot.data().jobIdArray;
+          setAppliedJobs(data);
+        }
       });
 
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
-    getUserProfile();
+    const unsubscribe = db()
+      .collection(collection.EMPLOYEE)
+      .doc(uid)
+      .onSnapshot(docSnapshot => {
+        if (docSnapshot.exists) {
+          setUserData(docSnapshot.data());
+        }
+      });
+    return () => unsubscribe();
   }, [uid]);
 
   // const addNewJobToState = jobData => {

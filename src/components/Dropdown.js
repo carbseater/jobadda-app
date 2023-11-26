@@ -4,16 +4,10 @@ import React, {memo, useState} from 'react';
 import {Menu, TextInput, TouchableRipple, useTheme} from 'react-native-paper';
 import {scale} from 'react-native-size-matters';
 
-const DropdownPresenter = ({
-  dropdownOptions,
-  disabled,
-  value,
-  onChange,
-  label,
-}) => {
+const DropdownPresenter = ({options, disabled, value, onChange, label}) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const {colors} = useTheme();
-  // console.log(dropdownOptions);
+  // console.log(options);
   return (
     <View style={{marginVertical: scale(5)}}>
       <Menu
@@ -28,7 +22,7 @@ const DropdownPresenter = ({
             disabled={disabled}>
             <View pointerEvents={'none'}>
               <TextInput
-                value={value?.name || null}
+                value={value || null}
                 mode={'outlined'}
                 label={label}
                 pointerEvents={'none'}
@@ -42,15 +36,15 @@ const DropdownPresenter = ({
             </View>
           </TouchableRipple>
         }>
-        {dropdownOptions &&
-          Object.entries(dropdownOptions)?.map(([key, value]) => {
+        {options &&
+          Object.entries(options)?.map(([key, value]) => {
             // console.log(value);
             return (
               <Menu.Item
                 key={value.name + value.id}
                 title={value.name}
                 onPress={() => {
-                  onChange({id: value.id, name: value.name});
+                  onChange(value.id);
                   setIsDropdownVisible(false);
                 }}
               />

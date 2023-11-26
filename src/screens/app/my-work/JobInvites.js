@@ -10,13 +10,7 @@ import {
 } from 'utils/general-fn';
 import {CircularLoader} from 'components/CircularLoader';
 import {useNavigation} from '@react-navigation/native';
-import {
-  Surface,
-  useTheme,
-  Text,
-  TouchableRipple,
-  Paragraph,
-} from 'react-native-paper';
+import {Surface, useTheme, Text, TouchableRipple} from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {padding} from 'styleConfig/padding';
 import {nav} from 'constants/navigation';
@@ -30,7 +24,6 @@ export function JobInvites() {
   const {
     currentUser: {uid},
   } = useAuth();
-  const {colors} = useTheme();
 
   const fetchJobInvites = async () => {
     const year = nearestFiveYear();
@@ -39,7 +32,8 @@ export function JobInvites() {
       .get();
     if (response.exists) {
       const data = Object.entries(response.data());
-      setJobInvites(data);
+      const sortedData = data.sort((a, b) => b[1].invitedOn - a[1].invitedOn);
+      setJobInvites(sortedData);
     }
     setIsLoading(false);
   };
@@ -102,7 +96,9 @@ const JobInviteCard = ({data, jobId}) => {
             {data.companyCity.toUpperCase()}
           </Text>
         </Surface>
-        <Text style={{fontSize: 10}}>{getRelativeDate(data.invitedOn)}</Text>
+        <Text style={{fontSize: 10}}>
+          Invited {getRelativeDate(data.invitedOn)}
+        </Text>
       </View>
     </Surface>
   );

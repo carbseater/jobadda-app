@@ -8,16 +8,26 @@ import {AuthStack} from './auth-stack';
 import {AppStack} from './app-stack';
 import {theme} from '../core/theme';
 import {UserProvider} from '../UserContext';
+import VerifyEmail from 'screens/auth/verify-email';
 
 const Stack = createNativeStackNavigator();
 const Routes = () => {
   const {currentUser} = useAuth();
+  let emailVerified;
+  if (currentUser) {
+    emailVerified = currentUser.emailVerified;
+  }
+
   return (
     <NavigationContainer theme={theme}>
       {currentUser ? (
-        <UserProvider>
-          <AppStack />
-        </UserProvider>
+        emailVerified ? (
+          <UserProvider>
+            <AppStack />
+          </UserProvider>
+        ) : (
+          <VerifyEmail />
+        )
       ) : (
         <AuthStack />
       )}

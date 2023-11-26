@@ -6,7 +6,7 @@ import {memo} from 'react';
 import {margin} from 'styleConfig/margin';
 import {padding} from 'styleConfig/padding';
 
-const RadioButton = ({radioOptions, disabled, value, onChange, label}) => {
+const RadioButton = ({options, disabled, value, onChange, label}) => {
   const {colors} = useTheme();
 
   // console.log('Radio button rendered');
@@ -36,7 +36,7 @@ const RadioButton = ({radioOptions, disabled, value, onChange, label}) => {
           style={{
             flexDirection: 'row',
           }}>
-          {Object.entries(radioOptions).map(([key, val]) => {
+          {Object.entries(options).map(([key, val]) => {
             return (
               <View
                 key={val.id}

@@ -1,120 +1,179 @@
-import React, {memo, useState} from 'react';
-import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
-import Background from '../../components/Background';
-import Logo from '../../components/Logo';
-import Header from '../../components/Header';
-import Button from '../../components/Button';
-import TextInput from '../../components/TextInput';
-import BackButton from '../../components/BackButton';
-import {theme} from '../../core/theme';
-import {emailValidator, passwordValidator} from '../../core/utils';
-import {Navigation} from '../types';
+import React, {useState} from 'react';
+import {
+  SafeAreaView,
+  View,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+} from 'react-native';
+
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import LoginSVG from 'assets/login2.svg';
+// import GoogleSVG from '../assets/images/misc/google.svg';
+// import FacebookSVG from '../assets/images/misc/facebook.svg';
+// import TwitterSVG from '../assets/images/misc/twitter.svg';
+
+import CustomButton from 'components/CustomButton';
+import InputField, {FormInput} from 'components/InputField';
+import {Button, Divider, HelperText, Text, useTheme} from 'react-native-paper';
+import {scale} from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
 import {nav} from 'constants/navigation';
+import {emailValidator, passwordValidator} from 'core/utils';
 import {useAuth} from 'AuthContext';
-import {getUserData} from 'firebase-database/read-operations';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useForm} from 'react-hook-form';
+import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
+import {margin} from 'styleConfig/margin';
+import {updateFcmToken} from 'firebase-database/write-operations';
 
-export const LoginScreen = memo(({navigation}) => {
-  const [email, setEmail] = useState({value: '', error: ''});
-  const [password, setPassword] = useState({value: '', error: ''});
+export const LoginScreen = ({navigation}) => {
+  const {colors} = useTheme();
+  const navigator = useNavigation();
+  const {signInWithEmailAndPassword, googleSignIn} = useAuth();
+  const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
-  const {signInWithEmailAndPassword} = useAuth();
-  const _onLoginPressed = async () => {
-    setLoading(true);
-    const emailError = emailValidator(email.value);
-    const passwordError = passwordValidator(password.value);
+  const {
+    handleSubmit,
+    formState: {errors},
+    control,
+  } = useForm();
 
-    if (emailError || passwordError) {
-      setEmail({...email, error: emailError});
-      setPassword({...password, error: passwordError});
-      return;
-    }
+  const handleLogin = async formData => {
+    setLoading(() => true);
+    setLoginError(() => '');
+    const {email, password} = formData;
+
     try {
-      const {
-        user: {uid},
-      } = await signInWithEmailAndPassword(email.value, password.value);
-      const userData = await getUserData(uid);
-      console.log('User data', userData);
-      await AsyncStorage.setItem('@userProfile', JSON.stringify(userData));
-      // console.log('User signed in succesfully', user);
+      const {user} = await signInWithEmailAndPassword(email.trim(), password);
+      await updateFcmToken(user.uid);
+      console.log('Login user', user);
     } catch (err) {
-      console.log('Login error', err);
+      const message = err.message;
+      console.log('errr', err.message);
+      setLoginError(() => message);
     }
-    setLoading(false);
+    setLoading(() => false);
   };
-
+  // console.log(loginData);
   return (
-    <Background>
-      <BackButton goBack={() => navigation.navigate('HomeScreen')} />
-
-      {/* <Logo /> */}
-
-      <Header>Welcome back.</Header>
-
-      <TextInput
-        label="Email"
-        returnKeyType="next"
-        value={email.value}
-        onChangeText={text => setEmail({value: text, error: ''})}
-        error={!!email.error}
-        errorText={email.error}
-        autoCapitalize="none"
-        autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
+    <SafeAreaView style={{flex: 1, justifyContent: 'center'}}>
+      <StatusBar
+        backgroundColor={colors.background}
+        barStyle={'dark-content'}
       />
+      <View style={{paddingHorizontal: 25}}>
+        <View style={{alignItems: 'center'}}>
+          <LoginSVG
+            height={scale(230)}
+            width={scale(230)}
+            style={{transform: [{rotate: '-5deg'}]}}
+          />
+        </View>
 
-      <TextInput
-        label="Password"
-        returnKeyType="done"
-        value={password.value}
-        onChangeText={text => setPassword({value: text, error: ''})}
-        error={!!password.error}
-        errorText={password.error}
-        secureTextEntry
-      />
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: '500',
+            color: '#333',
+            marginBottom: 30,
+          }}>
+          Login
+        </Text>
 
-      <View style={styles.forgotPassword}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate(nav.RECOVER_PASSWORD)}>
-          <Text style={styles.label}>Forgot your password?</Text>
-        </TouchableOpacity>
+        {loginError && <HelperText type="error">{loginError}</HelperText>}
+        <FormInput
+          control={control}
+          label={'Email ID'}
+          onChangeText={newText => setLoginData({...loginData, email: newText})}
+          icon={
+            <MaterialIcons
+              name="alternate-email"
+              size={20}
+              color="#666"
+              style={{marginRight: 5}}
+            />
+          }
+          id="email"
+          keyboardType="email-address"
+        />
+
+        {errors['email']?.message && (
+          <HelperText type="error">{errors['email'].message}</HelperText>
+        )}
+
+        <FormInput
+          control={control}
+          id="password"
+          label={'Password'}
+          onChangeText={newText =>
+            setLoginData({...loginData, password: newText})
+          }
+          icon={
+            <Ionicons
+              name="lock-closed-outline"
+              size={20}
+              color="#666"
+              style={{marginRight: 5}}
+            />
+          }
+          inputType="password"
+          fieldButtonLabel={'Forgot?'}
+          fieldButtonFunction={() => navigator.navigate(nav.RECOVER_PASSWORD)}
+        />
+
+        {errors['password']?.message && (
+          <HelperText type="error">{errors['password'].message}</HelperText>
+        )}
+        {/* <CustomButton label={'Login'} onPress={() => {}} /> */}
+        <Button
+          loading={loading}
+          disabled={loading}
+          mode="contained"
+          style={{marginVertical: margin.smallMd}}
+          onPress={handleSubmit(handleLogin)}>
+          Login
+        </Button>
+
+        {/* <Divider bold style={{marginTop: 15}} /> */}
+        <HelperText style={{textAlign: 'center'}}>Or</HelperText>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginVertical: 10,
+          }}>
+          <Button
+            disabled={loading}
+            onPress={googleSignIn}
+            mode="outlined"
+            rippleColor={'rgba(255, 0, 0, 0.1)'}
+            labelStyle={{color: '#bd0808'}}
+            icon={'google'}
+            style={{width: '100%', borderColor: '#bd0808'}}
+            contentStyle={{color: 'red'}}>
+            Login with google
+          </Button>
+        </View>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginVertical: margin.small,
+          }}>
+          <Text>New to the app?</Text>
+          <TouchableOpacity onPress={() => navigator.navigate(nav.SIGN_UP)}>
+            <Text style={{color: colors.primary, fontWeight: '700'}}>
+              {' '}
+              Register
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <Button
-        loading={loading}
-        disabled={loading}
-        mode="contained"
-        onPress={_onLoginPressed}>
-        Login
-      </Button>
-
-      <View style={styles.row}>
-        <Text style={styles.label}>Don’t have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate(nav.SIGN_UP)}>
-          <Text style={styles.link}>Sign up</Text>
-        </TouchableOpacity>
-      </View>
-    </Background>
+    </SafeAreaView>
   );
-});
+};
 
-const styles = StyleSheet.create({
-  forgotPassword: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 24,
-  },
-  row: {
-    flexDirection: 'row',
-    marginTop: 4,
-    justifyContent: 'center',
-  },
-  label: {
-    color: theme.colors.secondary,
-  },
-  link: {
-    fontWeight: 'bold',
-    color: theme.colors.primary,
-  },
-});
+export default LoginScreen;
